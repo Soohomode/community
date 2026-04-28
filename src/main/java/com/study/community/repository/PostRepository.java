@@ -3,5 +3,12 @@ package com.study.community.repository;
 import com.study.community.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PostRepository extends JpaRepository<Post,Long> {
+public interface PostRepository extends JpaRepository<Post, Long> {
+    /**
+     * JpaRepository 를 상속 받으면 아래 메서드가 자동 생성
+     * save()        ← 저장
+     * findById()    ← ID로 조회
+     * findAll()     ← 전체 조회
+     * delete()      ← 삭제
+     */
 }
