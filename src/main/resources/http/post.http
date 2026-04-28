@@ -1,0 +1,20 @@
+### 게시글 전체 조회
+GET http://localhost:8080/api/posts
+Content-Type: application/json
+
+###  게시글 작성
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "두 번째 게시글",
+  "content": "IntelliJ HTTP Client로 테스트!"
+}
+
+### 게시글 단건 조회
+GET http://localhost:8080/api/posts/1
+Content-Type: application/json
+
+###
+GET http://localhost:8080/api/posts/2
+Content-Type: application/json
