@@ -32,6 +32,12 @@ public class Post {
     @JoinColumn(name = "member_id")    // FK 컬럼 이름 지정
     private Member member;
 
+    public Post(String title, String content, Member member) {
+        this.title = title;
+        this.content = content;
+        this.member = member;
+    }
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
