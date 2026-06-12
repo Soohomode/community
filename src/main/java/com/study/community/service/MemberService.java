@@ -22,6 +22,12 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // Email로 멤버 조회하기
+    public Member findByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException(email));
+    }
+
     // 회원가입
     @Transactional
     public void join(MemberJoinRequest request) {

@@ -21,3 +21,14 @@ Content-Type: application/json
 
 ### 존재하지 않는 게시글 조회
 GET http://localhost:8080/api/posts/999
+
+
+### 토큰으로 게시글 작성
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgxMjYxNDIzLCJleHAiOjE3ODEzNDc4MjN9.vJoONEXg2xn9yHgAlZmoYtWGpqlCxOJJh3JXM_fAqzA
+
+{
+  "title": "로그인 후 작성한 게시글",
+  "content": "JWT 토큰 인증 성공!"
+}

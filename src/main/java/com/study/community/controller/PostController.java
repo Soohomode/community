@@ -1,5 +1,9 @@
 package com.study.community.controller;
 
+import com.study.community.domain.Member;
+import com.study.community.service.MemberService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import com.study.community.common.ApiResponse;
 import com.study.community.dto.post.PostCreateRequest;
 import com.study.community.dto.post.PostResponse;
@@ -16,6 +20,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final MemberService memberService;
 
     /**
      * RestController — JSON 형태로 응답하는 Controller
@@ -29,10 +34,11 @@ public class PostController {
 
     // 게시글 작성
     @PostMapping
-    public ResponseEntity<ApiResponse<PostResponse>> create(@RequestBody PostCreateRequest request) {
-        // 임시 member 처리 - 나중에 로그인 기능 구현 후 교체 예정
-        PostResponse response = postService.create(request, null);
-        return ResponseEntity.ok(ApiResponse.ok("게시글 작성 성공", response));
+    public ResponseEntity<ApiResponse<PostResponse>> create(
+            @RequestBody PostCreateRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Member member = memberService.findByEmail(userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.ok("게시글 작성 성공", postService.create(request, member)));
     }
 
     // 게시글 전체 조회

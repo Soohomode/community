@@ -25,17 +25,11 @@ public class PostService {
     // 게시글 작성
     @Transactional // 작성/수정/삭제는 트랜잭션 필요
     public PostResponse create(PostCreateRequest request, Member member) {
-        // 임시 처리 - 테스트용 멤버 조회 또는 생성
-        Member testMember = memberRepository.findById(1L)
-                .orElseGet(() -> memberRepository.save(new Member("test@test.com", "1234", "테스터")));
-
-        Post post = new Post(request.getTitle(), request.getContent(), testMember);
+        Post post = new Post(request.getTitle(), request.getContent(), member);
         Post savedPost = postRepository.save(post);
-
         // 저장 후 연관관계 포함해서 다시 조회
         Post foundPost = postRepository.findById(savedPost.getId())
                 .orElseThrow(() -> new PostNotFoundException(savedPost.getId()));
-
         return new PostResponse(foundPost);
     }
 

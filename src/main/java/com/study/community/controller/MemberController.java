@@ -1,6 +1,5 @@
 package com.study.community.controller;
 
-
 import com.study.community.common.ApiResponse;
 import com.study.community.dto.member.LoginRequest;
 import com.study.community.dto.member.MemberJoinRequest;
@@ -21,7 +20,7 @@ public class MemberController {
     private final MemberService memberService;
 
     // 회원가입
-    @PostMapping("/Join")
+    @PostMapping("/join")
     public ResponseEntity<ApiResponse<Void>> join(@RequestBody MemberJoinRequest request) {
         memberService.join(request);
         return ResponseEntity.ok(ApiResponse.ok("회원가입 성공", null));
