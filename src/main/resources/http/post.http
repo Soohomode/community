@@ -66,3 +66,7 @@ Authorization: Bearer 이상한토큰값
   "title": "해킹 시도",
   "content": "실패해야 함"
 }
+
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgxMjc5Njg2LCJleHAiOjE3ODEzNjYwODZ9.vnd5qISlsfkQL6OrfaD-x1Av_Yhp6xcJynjyj4wabf8
+### 게시글 목록 조회 (페이징)
+GET http://localhost:8080/api/posts?page=3&size=5

@@ -1,8 +1,11 @@
 package com.study.community.controller;
 
 import com.study.community.domain.Member;
+import com.study.community.dto.post.PostPageResponse;
 import com.study.community.dto.post.PostUpdateRequest;
 import com.study.community.service.MemberService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.study.community.common.ApiResponse;
@@ -44,8 +47,11 @@ public class PostController {
 
     // 게시글 전체 조회
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PostResponse>>> findAll() {
-        return ResponseEntity.ok(ApiResponse.ok("게시글 목록 조회 성공", postService.findAll()));
+    public ResponseEntity<ApiResponse<PostPageResponse>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PageRequest pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(ApiResponse.ok("게시글 목록 조회 성공", postService.findAll(pageable)));
     }
 
     // 게시글 단건 조회

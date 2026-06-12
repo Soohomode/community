@@ -1,6 +1,8 @@
 package com.study.community.repository;
 
 import com.study.community.domain.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -11,4 +13,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      * findAll()     ← 전체 조회
      * delete()      ← 삭제
      */
+
+    Page<Post> findAll(Pageable pageable);
 }

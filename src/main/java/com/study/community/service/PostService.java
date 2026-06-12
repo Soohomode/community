@@ -3,6 +3,7 @@ package com.study.community.service;
 import com.study.community.domain.Member;
 import com.study.community.domain.Post;
 import com.study.community.dto.post.PostCreateRequest;
+import com.study.community.dto.post.PostPageResponse;
 import com.study.community.dto.post.PostResponse;
 import com.study.community.dto.post.PostUpdateRequest;
 import com.study.community.exception.BusinessException;
@@ -10,6 +11,8 @@ import com.study.community.exception.PostNotFoundException;
 import com.study.community.repository.MemberRepository;
 import com.study.community.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +38,11 @@ public class PostService {
         return new PostResponse(foundPost);
     }
 
-    // 게시글 전체 조회
-    public List<PostResponse> findAll() {
-        return postRepository.findAll().stream()
-                .map(PostResponse::new)
-                .collect(Collectors.toList());
+    // 게시글 전체 조회 (페이징 처리)
+    public PostPageResponse findAll(Pageable pageable) {
+        Page<PostResponse> page = postRepository.findAll(pageable)
+                .map(PostResponse::new);
+        return new PostPageResponse(page);
     }
 
     // 게실글 단건 조회
