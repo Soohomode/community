@@ -32,3 +32,37 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0I
   "title": "로그인 후 작성한 게시글",
   "content": "JWT 토큰 인증 성공!"
 }
+
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgxMjYyMjU3LCJleHAiOjE3ODEzNDg2NTd9.p1_n6sHmpv5y4kpVFayupZXxZ7tBzVh_GCNuG_kVPgE
+### 게시글 수정
+PUT http://localhost:8080/api/posts/4
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MkB0ZXN0LmNvbSIsImlhdCI6MTc4MTI3MDgyMywiZXhwIjoxNzgxMzU3MjIzfQ.loUfP-DKW8uEJspSfcCnJz5jDd5KeEuKlO6lXaIbIRQ
+
+{
+  "title": "수정된 제목2",
+  "content": "수정된 내용2"
+}
+
+### 게시글 삭제
+DELETE http://localhost:8080/api/posts/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgxMjYxNDIzLCJleHAiOjE3ODEzNDc4MjN9.vJoONEXg2xn9yHgAlZmoYtWGpqlCxOJJh3JXM_fAqzA
+
+### 토큰 없이 게시글 작성 시도
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "토큰 없이 작성",
+  "content": "실패해야 함"
+}
+
+### 다른 사람 게시글 수정 시도 (없는 토큰)
+PUT http://localhost:8080/api/posts/1
+Content-Type: application/json
+Authorization: Bearer 이상한토큰값
+
+{
+  "title": "해킹 시도",
+  "content": "실패해야 함"
+}

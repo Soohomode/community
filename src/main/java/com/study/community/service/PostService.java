@@ -4,6 +4,8 @@ import com.study.community.domain.Member;
 import com.study.community.domain.Post;
 import com.study.community.dto.post.PostCreateRequest;
 import com.study.community.dto.post.PostResponse;
+import com.study.community.dto.post.PostUpdateRequest;
+import com.study.community.exception.BusinessException;
 import com.study.community.exception.PostNotFoundException;
 import com.study.community.repository.MemberRepository;
 import com.study.community.repository.PostRepository;
@@ -45,5 +47,32 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
         return new PostResponse(post);
+    }
+
+    // 게시글 수정
+    @Transactional
+    public PostResponse update(Long id, PostUpdateRequest request, Member member) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
+
+        if (!post.getMember().getId().equals(member.getId())) {
+            throw new BusinessException("본인의 게시글만 수정할 수 있습니다.");
+        }
+
+        post.update(request.getTitle(), request.getContent());
+        return new PostResponse(post);
+    }
+
+    // 게시글 삭제
+    @Transactional
+    public void delete(Long id, Member member) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
+
+        if (!post.getMember().getId().equals(member.getId())) {
+            throw new BusinessException("본인의 게시글만 삭제할 수 있습니다.");
+        }
+
+        postRepository.delete(post);
     }
 }

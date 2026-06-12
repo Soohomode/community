@@ -1,6 +1,7 @@
 package com.study.community.controller;
 
 import com.study.community.domain.Member;
+import com.study.community.dto.post.PostUpdateRequest;
 import com.study.community.service.MemberService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,4 +53,25 @@ public class PostController {
     public ResponseEntity<ApiResponse<PostResponse>> findById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.ok("게시글 조회 성공", postService.findById(id)));
     }
+
+    // 게시글 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<PostResponse>> update(
+            @PathVariable Long id,
+            @RequestBody PostUpdateRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Member member = memberService.findByEmail(userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.ok("게시글 수정 성공", postService.update(id, request, member)));
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Member member = memberService.findByEmail(userDetails.getUsername());
+        postService.delete(id, member);
+        return ResponseEntity.ok(ApiResponse.ok("게시글 삭제 성공", null));
+    }
+
 }
