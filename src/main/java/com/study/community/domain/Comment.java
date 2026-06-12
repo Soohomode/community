@@ -31,6 +31,12 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    public Comment(String content, Member member, Post post) {
+        this.content = content;
+        this.member = member;
+        this.post = post;
+    }
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
