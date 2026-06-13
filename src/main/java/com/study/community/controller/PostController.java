@@ -60,6 +60,16 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.ok("게시글 조회 성공", postService.findById(id)));
     }
 
+    // 게시글 검색
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<PostPageResponse>> search(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PageRequest pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(ApiResponse.ok("게시글 검색 성공", postService.search(keyword, pageable)));
+    }
+
     // 게시글 수정
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<PostResponse>> update(

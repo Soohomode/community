@@ -52,6 +52,14 @@ public class PostService {
         return new PostResponse(post);
     }
 
+    // 게시글 검색
+    public PostPageResponse search(String keyword, Pageable pageable) {
+        Page<PostResponse> page = postRepository
+                .findByTitleContainingIgnoreCase(keyword, pageable)
+                .map(PostResponse::new);
+        return new PostPageResponse(page);
+    }
+
     // 게시글 수정
     @Transactional
     public PostResponse update(Long id, PostUpdateRequest request, Member member) {

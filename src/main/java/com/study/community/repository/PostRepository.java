@@ -14,5 +14,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      * delete()      ← 삭제
      */
 
+    // 페이징 전체 조회
     Page<Post> findAll(Pageable pageable);
+
+    // 게시글 제목으로 검색
+    Page<Post> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
 }
