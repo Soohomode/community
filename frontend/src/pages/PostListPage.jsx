@@ -94,7 +94,13 @@ function PostListPage() {
               <div style={styles.meta}>
                 <span>{post.nickname}</span>
                 <span>조회수 {post.viewCount}</span>
-                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                <span>
+                  {post.createdAt
+                    ? new Date(
+                        Array.isArray(post.createdAt) ? new Date(...post.createdAt) : post.createdAt,
+                      ).toLocaleDateString()
+                    : ''}
+                </span>
               </div>
             </div>
           ))
