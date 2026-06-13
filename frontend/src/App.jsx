@@ -5,6 +5,7 @@ import PostListPage from './pages/PostListPage';
 import PostDetailPage from './pages/PostDetailPage';
 import PostCreatePage from './pages/PostCreatePage';
 import Navbar from './components/Navbar';
+import PostEditPage from './pages/PostEditPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/posts" element={<PostListPage />} />
         <Route path="/posts/:id" element={<PostDetailPage />} />
         <Route path="/posts/create" element={<PostCreatePage />} />
+          <Route path="/posts/:id/edit" element={<PostEditPage />} />
       </Routes>
     </BrowserRouter>
   );
