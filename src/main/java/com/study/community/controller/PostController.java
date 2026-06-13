@@ -1,16 +1,14 @@
 package com.study.community.controller;
 
 import com.study.community.domain.Member;
-import com.study.community.dto.post.PostPageResponse;
-import com.study.community.dto.post.PostUpdateRequest;
+import com.study.community.dto.post.*;
 import com.study.community.service.MemberService;
+import com.study.community.service.PostFacade;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.study.community.common.ApiResponse;
-import com.study.community.dto.post.PostCreateRequest;
-import com.study.community.dto.post.PostResponse;
 import com.study.community.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +23,7 @@ public class PostController {
 
     private final PostService postService;
     private final MemberService memberService;
+    private final PostFacade postFacade;
 
     /**
      * RestController — JSON 형태로 응답하는 Controller
@@ -58,6 +57,12 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PostResponse>> findById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.ok("게시글 조회 성공", postService.findById(id)));
+    }
+
+    // 게시글 상세 조회 (게시글 + 댓글)
+    @GetMapping("/{id}/detail")
+    public ResponseEntity<ApiResponse<PostDetailResponse>> getDetail(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok("게시글 상세 조회 성공", postFacade.getPostDetail(id)));
     }
 
     // 게시글 검색

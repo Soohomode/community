@@ -5,7 +5,7 @@ GET https://examples.http-client.intellij.net/get
 ### 댓글 작성
 POST http://localhost:8080/api/posts/1/comments
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgxMjczODQ3LCJleHAiOjE3ODEzNjAyNDd9.W7xOVGJn_bcjuv8mrLeD50hk7VI9n7tUy4Xg_zLy2ic
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgxMzQ3Mjk3LCJleHAiOjE3ODE0MzM2OTd9.bDezMx4RVXkX6NL8f9_gHvzNdAyzeiqCl0fEkumvVnM
 
 {
   "content": "첫 번째 댓글입니다!"
