@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d611e60a-4959-4475-a410-580b7f17fe2e" name="변경" comment="chore: GitHub Actions CI 설정 추가">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="220" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="community" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="HTTP Request" />
+        <option value="Class" />
+        <option value="Dockerfile" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Soohomode&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Soohomode/community.git&quot;,
+    &quot;accountId&quot;: &quot;945c9934-a16c-4f72-a6e3-92787b137148&quot;
+  }
+}</component>
+  <component name="HttpClientOnboardingState">{
+  &quot;isOnboardingCommentShown&quot;: true
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.3711308926572623" />
+      <entry key="MS500" value="1.8201729111967262" />
+      <entry key="S2" value="1.951648035261894" />
+      <entry key="S5" value="1.9803711945212137" />
+      <entry key="S10" value="1.99019614701443" />
+      <entry key="S30" value="2.259738676144778" />
+      <entry key="S60" value="4.629007533528373" />
+      <entry key="M2" value="11.66822940511092" />
+      <entry key="M5" value="25.22092547049162" />
+      <entry key="M10" value="36.283747935156505" />
+      <entry key="M15" value="46.793354349672924" />
+      <entry key="M30" value="81.08712662145494" />
+      <entry key="H1" value="132.9510791033673" />
+      <entry key="H2" value="200.54579967895958" />
+      <entry key="H4" value="294.2597567716005" />
+      <entry key="D1" value="513.7141653416019" />
+      <entry key="W1" value="582.9970831922733" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="1.4506160123073703E-102" />
+      <entry key="S2" value="3.485216244983475E-26" />
+      <entry key="S5" value="7.285739331053195E-11" />
+      <entry key="S10" value="1.0807475979804047E-5" />
+      <entry key="S30" value="0.034637948550943556" />
+      <entry key="S60" value="0.2845218949541297" />
+      <entry key="M2" value="0.8773144557724377" />
+      <entry key="M5" value="1.8059145195840602" />
+      <entry key="M10" value="2.3227085033701234" />
+      <entry key="M15" value="2.546124535496452" />
+      <entry key="M30" value="3.136433221819812" />
+      <entry key="H1" value="7.314814913505589" />
+      <entry key="H2" value="25.557356792197382" />
+      <entry key="H4" value="63.88870806434565" />
+      <entry key="D1" value="164.31780503291023" />
+      <entry key="W1" value="196.86645365474783" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.311126810047894" />
+      <entry key="MS500" value="1.80485043500324" />
+      <entry key="S2" value="1.9475773081393404" />
+      <entry key="S5" value="1.9787219531282363" />
+      <entry key="S10" value="1.989375950022709" />
+      <entry key="S30" value="2.2910156338090077" />
+      <entry key="S60" value="4.901236631326058" />
+      <entry key="M2" value="12.527770172695096" />
+      <entry key="M5" value="27.013008705688087" />
+      <entry key="M10" value="38.59772853365903" />
+      <entry key="M15" value="49.3330829088219" />
+      <entry key="M30" value="84.21941589168043" />
+      <entry key="H1" value="140.26052922554533" />
+      <entry key="H2" value="226.09323104551132" />
+      <entry key="H4" value="358.1359629431596" />
+      <entry key="D1" value="678.0267166317719" />
+      <entry key="W1" value="779.8626434843696" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="3CwJGGnljS2tWBjQmXiQzno1VVt" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.community 빌드.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.소스 다운로드.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.comment | 댓글 목록 조회.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.comment | 댓글 삭제#2.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.comment | 댓글 삭제.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.comment | 댓글 작성.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.generated-requests | #14.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.member | Docker 환경 회원가입 테스트.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.member | 로그인.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.member | 로그인2.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.member | 회원가입.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.member | 회원가입2.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | #4.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 게시글 검색.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 게시글 단건 조회.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 게시글 목록 조회 (페이징).executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 게시글 삭제.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 게시글 상세 조회 (게시글 + 댓글 한번에).executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 게시글 수정.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 게시글 작성.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 게시글 전체 조회.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 다른 사람 게시글 수정 시도 (없는 토큰).executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 오래된순 조회.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 조회수순 조회.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 존재하지 않는 게시글 조회.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 최신순 조회 (기본값).executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 토큰 없이 게시글 작성 시도.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 토큰으로 게시글 작성#1.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 토큰으로 게시글 작성#2.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 요청.post | 토큰으로 게시글 작성.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.CommunityApplication.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/sooho/Desktop/01_PERSONAL/ProjectStudy/community-project/community&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/backend" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.study.community.dto.post" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.CommunityApplication">
+    <configuration name="member | Docker 환경 회원가입 테스트" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/src/main/resources/http/member.http" executionIdentifier="Docker 환경 회원가입 테스트" index="6" runType="단일 요청 실행">
+      <method v="2" />
+    </configuration>
+    <configuration name="member | 로그인" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/src/main/resources/http/member.http" executionIdentifier="로그인" index="4" runType="단일 요청 실행">
+      <method v="2" />
+    </configuration>
+    <configuration name="post | 게시글 상세 조회 (게시글 + 댓글 한번에)" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/src/main/resources/http/post.http" executionIdentifier="게시글 상세 조회 (게시글 + 댓글 한번에)" index="17" runType="단일 요청 실행">
+      <method v="2" />
+    </configuration>
+    <configuration name="post | 최신순 조회 (기본값)" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/src/main/resources/http/post.http" executionIdentifier="최신순 조회 (기본값)" index="14" runType="단일 요청 실행">
+      <method v="2" />
+    </configuration>
+    <configuration name="post | 게시글 작성" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/src/main/resources/http/post.http" executionIdentifier="게시글 작성" index="2" runType="단일 요청 실행">
+      <method v="2" />
+    </configuration>
+    <configuration name="post | 오래된순 조회" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/src/main/resources/http/post.http" executionIdentifier="오래된순 조회" index="15" runType="단일 요청 실행">
+      <method v="2" />
+    </configuration>
+    <configuration name="post | 게시글 단건 조회" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/src/main/resources/http/post.http" executionIdentifier="게시글 단건 조회" index="3" runType="단일 요청 실행">
+      <method v="2" />
+    </configuration>
+    <configuration name="CommunityApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <envs>
+        <env name="DB_PASSWORD" value="gudwls12" />
+        <env name="JWT_SECRET" value="community-study-jwt-secret-key-must-be-at-least-32-bytes" />
+      </envs>
+      <module name="community.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.study.community.CommunityApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="HTTP 요청.member | 로그인" />
+      <item itemvalue="HTTP 요청.member | Docker 환경 회원가입 테스트" />
+      <item itemvalue="HTTP 요청.post | 게시글 단건 조회" />
+      <item itemvalue="HTTP 요청.post | 게시글 상세 조회 (게시글 + 댓글 한번에)" />
+      <item itemvalue="HTTP 요청.post | 게시글 작성" />
+      <item itemvalue="HTTP 요청.post | 최신순 조회 (기본값)" />
+      <item itemvalue="Spring Boot.CommunityApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP 요청.member | Docker 환경 회원가입 테스트" />
+        <item itemvalue="HTTP 요청.post | 게시글 상세 조회 (게시글 + 댓글 한번에)" />
+        <item itemvalue="HTTP 요청.post | 게시글 단건 조회" />
+        <item itemvalue="HTTP 요청.post | 게시글 작성" />
+        <item itemvalue="HTTP 요청.post | 최신순 조회 (기본값)" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.25134.95" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.25134.95" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="d611e60a-4959-4475-a410-580b7f17fe2e" name="변경" comment="" />
+      <created>1777290602043</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1777290602043</updated>
+      <workItem from="1777290603538" duration="3391000" />
+      <workItem from="1777377999699" duration="3950000" />
+      <workItem from="1777809539403" duration="2830000" />
+      <workItem from="1777812400089" duration="36000" />
+      <workItem from="1777812459517" duration="244000" />
+      <workItem from="1777812713480" duration="348000" />
+      <workItem from="1777813165735" duration="239000" />
+      <workItem from="1777813421256" duration="1902000" />
+      <workItem from="1781171822759" duration="348000" />
+      <workItem from="1781172329819" duration="1162000" />
+      <workItem from="1781176018597" duration="2547000" />
+      <workItem from="1781181188646" duration="754000" />
+      <workItem from="1781181952597" duration="3045000" />
+      <workItem from="1781257899370" duration="3110000" />
+      <workItem from="1781261027354" duration="6119000" />
+      <workItem from="1781277455309" duration="2365000" />
+      <workItem from="1781327535425" duration="4609000" />
+      <workItem from="1781333853071" duration="6466000" />
+      <workItem from="1781347138991" duration="2287000" />
+      <workItem from="1781349454240" duration="3915000" />
+      <workItem from="1781357251648" duration="296000" />
+    </task>
+    <task id="LOCAL-00001" summary="feat: PostRepository 작성">
+      <option name="closed" value="true" />
+      <created>1777378639983</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1777378639983</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat: PostRepository 주석 추가">
+      <option name="closed" value="true" />
+      <created>1777378742900</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1777378742900</updated>
+    </task>
+    <task id="LOCAL-00003" summary="feat: Post 작성 요청 응답 DTO 작성">
+      <option name="closed" value="true" />
+      <created>1777379504161</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1777379504161</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat: PostService 작성 및 비즈니스 로직 작성">
+      <option name="closed" value="true" />
+      <created>1777380220889</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1777380220889</updated>
+    </task>
+    <task id="LOCAL-00005" summary="feat: MemberSerive 로직 추가 및 예외처리 추가 작성">
+      <option name="closed" value="true" />
+      <created>1781181431030</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1781181431031</updated>
+    </task>
+    <task id="LOCAL-00006" summary="fix: GlobalExceptionHandler 예외 내용 로그로 출력되도록 수정">
+      <option name="closed" value="true" />
+      <created>1781183566085</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1781183566085</updated>
+    </task>
+    <task id="LOCAL-00007" summary="feat: 게시글 제목 검색 구현">
+      <option name="closed" value="true" />
+      <created>1781331611964</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1781331611965</updated>
+    </task>
+    <task id="LOCAL-00008" summary="refactor: Builder 패턴 적용 (Member, Post)">
+      <option name="closed" value="true" />
+      <created>1781333323343</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1781333323343</updated>
+    </task>
+    <task id="LOCAL-00009" summary="feat: Strategy 패턴으로 게시글 정렬 기능 구현">
+      <option name="closed" value="true" />
+      <created>1781339794895</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1781339794896</updated>
+    </task>
+    <task id="LOCAL-00010" summary="chore: GitHub Actions CI 설정 추가">
+      <option name="closed" value="true" />
+      <created>1781351823240</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1781351823240</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: PostRepository 작성" />
+    <MESSAGE value="feat: PostRepository 주석 추가" />
+    <MESSAGE value="feat: Post 작성 요청 응답 DTO 작성" />
+    <MESSAGE value="feat: PostService 작성 및 비즈니스 로직 작성" />
+    <MESSAGE value="feat: MemberSerive 로직 추가 및 예외처리 추가 작성" />
+    <MESSAGE value="fix: GlobalExceptionHandler 예외 내용 로그로 출력되도록 수정" />
+    <MESSAGE value="feat: 게시글 제목 검색 구현" />
+    <MESSAGE value="refactor: Builder 패턴 적용 (Member, Post)" />
+    <MESSAGE value="feat: Strategy 패턴으로 게시글 정렬 기능 구현" />
+    <MESSAGE value="chore: GitHub Actions CI 설정 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="chore: GitHub Actions CI 설정 추가" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
