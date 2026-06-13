@@ -45,6 +45,10 @@ public class Post {
         this.content = content;
     }
 
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();

@@ -26,7 +26,7 @@ GET http://localhost:8080/api/posts/999
 ### 토큰으로 게시글 작성
 POST http://localhost:8080/api/posts
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgxMzQ3Mjk3LCJleHAiOjE3ODE0MzM2OTd9.bDezMx4RVXkX6NL8f9_gHvzNdAyzeiqCl0fEkumvVnM
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgxMzQ4MDQ3LCJleHAiOjE3ODE0MzQ0NDd9.dsHSrw0WekE9RLlsqBOVfPBoScWAwvZgp4OwUvEpmMM
 
 {
   "title": "로그인 후 작성한 게시글",
