@@ -30,7 +30,13 @@ public class PostService {
     // 게시글 작성
     @Transactional // 작성/수정/삭제는 트랜잭션 필요
     public PostResponse create(PostCreateRequest request, Member member) {
-        Post post = new Post(request.getTitle(), request.getContent(), member);
+
+        Post post = Post.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .member(member)
+                .build();
+
         Post savedPost = postRepository.save(post);
         // 저장 후 연관관계 포함해서 다시 조회
         Post foundPost = postRepository.findById(savedPost.getId())

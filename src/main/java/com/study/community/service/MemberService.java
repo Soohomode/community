@@ -35,11 +35,11 @@ public class MemberService {
             throw new DuplicateEmailException(request.getEmail());
         }
 
-        Member member = new Member(
-                request.getEmail(),
-                passwordEncoder.encode(request.getPassword()),
-                request.getNickname()
-        );
+        Member member = Member.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .nickname(request.getNickname())
+                .build();
 
         memberRepository.save(member);
     }

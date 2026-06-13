@@ -1,6 +1,7 @@
 package com.study.community.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +28,7 @@ public class Member {
 
     private LocalDateTime createdAt;
 
+    @Builder
     public Member(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
