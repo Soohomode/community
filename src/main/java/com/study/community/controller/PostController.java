@@ -49,9 +49,9 @@ public class PostController {
     @GetMapping
     public ResponseEntity<ApiResponse<PostPageResponse>> findAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(ApiResponse.ok("게시글 목록 조회 성공", postService.findAll(pageable)));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "latest") String sort) {
+        return ResponseEntity.ok(ApiResponse.ok("게시글 목록 조회 성공", postService.findAll(page, size, sort)));
     }
 
     // 게시글 단건 조회

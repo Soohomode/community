@@ -10,14 +10,15 @@ import com.study.community.exception.BusinessException;
 import com.study.community.exception.PostNotFoundException;
 import com.study.community.repository.MemberRepository;
 import com.study.community.repository.PostRepository;
+import com.study.community.service.strategy.PostSortStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
+    private final List<PostSortStrategy> sortStrategies;
 
     // 게시글 작성
     @Transactional // 작성/수정/삭제는 트랜잭션 필요
@@ -44,14 +45,23 @@ public class PostService {
         return new PostResponse(foundPost);
     }
 
-    // 게시글 전체 조회 (페이징 처리)
-    public PostPageResponse findAll(Pageable pageable) {
-        Page<PostResponse> page = postRepository.findAll(pageable)
+    // 게시글 전체 조회 (페이징 처리, Strategy)
+    public PostPageResponse findAll(int page, int size, String sort) {
+        PostSortStrategy strategy = sortStrategies.stream()
+                .filter(s -> s.getType().equals(sort))
+                .findFirst()
+                .orElse(sortStrategies.stream()
+                        .filter(s -> s.getType().equals("latest"))
+                        .findFirst()
+                        .orElseThrow());
+
+        PageRequest pageable = PageRequest.of(page, size, strategy.getSort());
+        Page<PostResponse> postPage = postRepository.findAll(pageable)
                 .map(PostResponse::new);
-        return new PostPageResponse(page);
+        return new PostPageResponse(postPage);
     }
 
-    // 게실글 단건 조회
+    // 게시글 단건 조회
     public PostResponse findById(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
