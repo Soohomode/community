@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d611e60a-4959-4475-a410-580b7f17fe2e" name="변경" comment="chore: GitHub Actions CI 설정 추가">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-    </list>
+    <list default="true" id="d611e60a-4959-4475-a410-580b7f17fe2e" name="변경" comment="chore: GitHub Actions CI 설정 추가" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -304,7 +299,7 @@
       <workItem from="1781333853071" duration="6466000" />
       <workItem from="1781347138991" duration="2287000" />
       <workItem from="1781349454240" duration="3915000" />
-      <workItem from="1781357251648" duration="296000" />
+      <workItem from="1781357251648" duration="676000" />
     </task>
     <task id="LOCAL-00001" summary="feat: PostRepository 작성">
       <option name="closed" value="true" />
