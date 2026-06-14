@@ -32,7 +32,9 @@ Spring Boot + React로 구현한 풀스택 커뮤니티 게시판 프로젝트�
 
 ---
 
-## 📁 프로젝트 구조
+## 📊 ERD
+
+![ERD](./backend/docs/erd.png)
 ## 📁 프로젝트 구조
 
 ```
