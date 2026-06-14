@@ -61,12 +61,19 @@ public class PostService {
         return new PostPageResponse(postPage);
     }
 
-    // 게시글 단건 조회
-    @Transactional
+    // 게시글 단건 조회 (조회수 증가 X)
     public PostResponse findById(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
-        post.increaseViewCount();
+        return new PostResponse(post);
+    }
+
+    // 게시글 단건 조회 (조회수 증가 O)
+    @Transactional
+    public PostResponse findByIdWithViewCount(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
+        post.increaseViewCount(); // 조회수 증가
         return new PostResponse(post);
     }
 

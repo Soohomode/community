@@ -61,8 +61,11 @@ public class PostController {
 
     // 게시글 상세 조회 (게시글 + 댓글)
     @GetMapping("/{id}/detail")
-    public ResponseEntity<ApiResponse<PostDetailResponse>> getDetail(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.ok("게시글 상세 조회 성공", postFacade.getPostDetail(id)));
+    public ResponseEntity<ApiResponse<PostDetailResponse>> getDetail(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "true") boolean increaseView) {
+        return ResponseEntity.ok(ApiResponse.ok("게시글 상세 조회 성공",
+                postFacade.getPostDetail(id, increaseView)));
     }
 
     // 게시글 검색

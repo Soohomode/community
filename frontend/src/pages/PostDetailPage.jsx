@@ -1,20 +1,33 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/axios';
 
 function PostDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  const [refresh, setRefresh] = useState(0);
   const token = localStorage.getItem('token');
 
+  // 댓글만 새로 불러오는 함수 추가
+  const fetchComments = async () => {
+    try {
+      const res = await api.get(`/api/posts/${id}/comments`);
+      setComments(res.data.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 최초 1회만 detail과 댓글을 같이 불러오고, 이후 댓글만 새로고침
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const res = await api.get(`/api/posts/${id}/detail`);
+        const fromEdit = location.state?.fromEdit;
+        const url = fromEdit ? `/api/posts/${id}/detail?increaseView=false` : `/api/posts/${id}/detail`;
+        const res = await api.get(url);
         setPost(res.data.data.post);
         setComments(res.data.data.comments);
       } catch (err) {
@@ -22,7 +35,7 @@ function PostDetailPage() {
       }
     };
     fetchDetail();
-  }, [id, refresh]);
+  }, [id, location.state?.fromEdit]);
 
   const handleDelete = async () => {
     if (!window.confirm('삭제하시겠습니까?')) return;
@@ -34,12 +47,13 @@ function PostDetailPage() {
     }
   };
 
+  // 댓글 작성/삭제 시 fetchComments만 호출
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
     try {
       await api.post(`/api/posts/${id}/comments`, { content: newComment });
       setNewComment('');
-      setRefresh((prev) => prev + 1);
+      fetchComments(); // detail 대신 comments만 갱신
     } catch (err) {
       alert(err.response?.data?.message || '댓글 작성 실패');
     }
@@ -49,7 +63,7 @@ function PostDetailPage() {
     if (!window.confirm('댓글을 삭제하시겠습니까?')) return;
     try {
       await api.delete(`/api/posts/${id}/comments/${commentId}`);
-      setRefresh((prev) => prev + 1);
+      fetchComments(); // detail 대신 comments만 갱신
     } catch (err) {
       alert(err.response?.data?.message || '댓글 삭제 실패');
     }
