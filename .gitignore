@@ -43,3 +43,11 @@
     frontend/node_modules/
     frontend/.env
     **/node_modules/
+
+    # 기존 내용 유지하면서 아래 추가
+    .idea/
+    .idea/**
+    frontend/node_modules/
+    frontend/node_modules/**
+    node_modules/
+    node_modules/**
