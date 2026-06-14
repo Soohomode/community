@@ -168,3 +168,81 @@ npm run dev
 | GET | /api/posts/{postId}/comments | 댓글 목록 | ❌ |
 | POST | /api/posts/{postId}/comments | 댓글 작성 | ✅ |
 | DELETE | /api/posts/{postId}/comments/{id} | 댓글 삭제 | ✅ |
+
+---
+
+## 🔧 트러블슈팅
+
+### 1. CORS 문제
+**문제**: 프론트엔드(localhost:5173)에서 백엔드(localhost:8080)로 요청 시 CORS 오류 발생
+
+**원인**: Spring Security가 preflight(OPTIONS) 요청을 인증 없이 통과시키지 않아서 발생
+
+**해결**: `SecurityConfig` 에 `CorsConfigurationSource` 빈을 등록하고 Spring Security 레벨에서 CORS 처리
+
+```java
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.addAllowedOrigin("http://localhost:5173");
+    configuration.addAllowedMethod("*");
+    configuration.addAllowedHeader("*");
+    configuration.setAllowCredentials(true);
+    ...
+}
+```
+
+---
+
+### 2. JWT Stateless 방식 선택 이유
+**고민**: 세션 방식 vs JWT 방식
+
+**선택**: JWT (Stateless)
+
+**이유**:
+- 서버가 세션을 저장하지 않아 서버 확장(Scale-out)에 유리
+- REST API 서버에 적합한 무상태(Stateless) 아키텍처 유지
+- 이후 마이크로서비스 전환 시에도 인증 서버 분리 용이
+
+---
+
+### 3. FetchType.LAZY 선택 이유
+**고민**: FetchType.EAGER vs FetchType.LAZY
+
+**선택**: LAZY
+
+**이유**:
+- EAGER는 연관 엔티티를 항상 즉시 로딩해 불필요한 쿼리 발생
+- 게시글 목록 조회 시 각 게시글마다 Member를 즉시 로딩하면 N+1 문제 발생
+- LAZY로 설정해 실제 필요한 시점에만 Member 정보 로딩
+
+---
+
+### 4. 조회수 중복 증가 문제
+**문제**: 댓글 작성/삭제 시 게시글을 다시 불러오면서 조회수가 계속 증가
+
+**원인**: 댓글 변경 후 `fetchDetail()` 을 다시 호출할 때마다 조회수 증가 로직이 실행됨
+
+**해결**:
+- 조회수 증가 API와 단순 조회 API 분리
+- 댓글 변경 시 댓글 목록만 별도로 갱신 (`/api/posts/{id}/comments`)
+- 페이지 최초 진입 시에만 조회수 증가
+
+---
+
+### 5. Docker MySQL 연결 타이밍 문제
+**문제**: `docker compose up` 시 MySQL 준비 전에 앱이 먼저 실행되어 DB 연결 실패
+
+**원인**: `depends_on` 은 컨테이너 시작만 보장하고 MySQL 실제 준비 완료는 보장하지 않음
+
+**해결**: `healthcheck` 설정으로 MySQL이 완전히 준비된 후 앱 실행
+
+```yaml
+healthcheck:
+  test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+  interval: 10s
+  retries: 5
+depends_on:
+  mysql:
+    condition: service_healthy
+```
