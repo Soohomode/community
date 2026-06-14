@@ -33,8 +33,10 @@ Spring Boot + React로 구현한 풀스택 커뮤니티 게시판 프로젝트�
 ---
 
 ## 📁 프로젝트 구조
-community/
+## 📁 프로젝트 구조
 
+```
+community/
 ├── backend/         # Spring Boot 백엔드
 │   └── src/main/java/com/study/community/
 │       ├── controller/   # API 요청/응답 처리
@@ -46,10 +48,11 @@ community/
 │       ├── config/       # Security, CORS 설정
 │       └── exception/    # 커스텀 예외 처리
 └── frontend/        # React 프론트엔드
-└── src/
-├── pages/    # 페이지 컴포넌트
-├── components/ # 공통 컴포넌트
-└── api/      # Axios 설정
+    └── src/
+        ├── pages/        # 페이지 컴포넌트
+        ├── components/   # 공통 컴포넌트
+        └── api/          # Axios 설정
+```
 
 ---
 
@@ -75,15 +78,18 @@ community/
 ## 🏗 아키텍처
 
 ### 레이어드 아키텍처
+
+```
 Client
-↓
+  ↓
 Controller   # 요청/응답 처리
-↓
+  ↓
 Service      # 비즈니스 로직
-↓
+  ↓
 Repository   # DB 접근 (Spring Data JPA)
-↓
+  ↓
 MySQL
+```
 
 ### 적용 디자인 패턴
 | 패턴 | 적용 위치 | 설명 |
@@ -96,18 +102,21 @@ MySQL
 ---
 
 ## 🔐 인증 흐름
+
+```
 로그인 요청
-↓
+    ↓
 이메일/비밀번호 검증
-↓
+    ↓
 JWT 토큰 발급
-↓
+    ↓
 이후 요청 시 Header에 토큰 포함
 Authorization: Bearer {token}
-↓
+    ↓
 JwtAuthenticationFilter에서 토큰 검증
-↓
+    ↓
 인증 완료
+```
 
 ---
 
