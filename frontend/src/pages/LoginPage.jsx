@@ -16,6 +16,7 @@ function LoginPage() {
     try {
       const res = await api.post('/api/auth/login', form);
       localStorage.setItem('token', res.data.data.token);
+      localStorage.setItem('nickname', res.data.data.nickname);
       navigate('/posts');
     } catch (err) {
       setError(err.response?.data?.message || '로그인에 실패했습니다.');
@@ -44,7 +45,9 @@ function LoginPage() {
             value={form.password}
             onChange={handleChange}
           />
-          <button style={styles.button} type="submit">로그인</button>
+          <button style={styles.button} type="submit">
+            로그인
+          </button>
         </form>
         <p style={styles.linkText}>
           계정이 없으신가요? <Link to="/join">회원가입</Link>

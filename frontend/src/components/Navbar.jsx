@@ -6,22 +6,33 @@ function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('nickname');
     navigate('/login');
   };
 
   return (
     <nav style={styles.nav}>
-      <Link to="/posts" style={styles.logo}>커뮤니티</Link>
+      <Link to="/posts" style={styles.logo}>
+        커뮤니티
+      </Link>
       <div style={styles.menu}>
         {token ? (
           <>
-            <Link to="/posts/create" style={styles.link}>글쓰기</Link>
-            <button onClick={handleLogout} style={styles.button}>로그아웃</button>
+            <Link to="/posts/create" style={styles.link}>
+              글쓰기
+            </Link>
+            <button onClick={handleLogout} style={styles.button}>
+              로그아웃
+            </button>
           </>
         ) : (
           <>
-            <Link to="/login" style={styles.link}>로그인</Link>
-            <Link to="/join" style={styles.link}>회원가입</Link>
+            <Link to="/login" style={styles.link}>
+              로그인
+            </Link>
+            <Link to="/join" style={styles.link}>
+              회원가입
+            </Link>
           </>
         )}
       </div>

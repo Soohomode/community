@@ -10,6 +10,7 @@ function PostDetailPage() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const token = localStorage.getItem('token');
+  const nickname = localStorage.getItem('nickname');
 
   // 댓글만 새로 불러오는 함수 추가
   const fetchComments = async () => {
@@ -88,7 +89,7 @@ function PostDetailPage() {
         </div>
         <hr style={styles.divider} />
         <p style={styles.content}>{post.content}</p>
-        {token && (
+        {token && post.nickname === nickname && (
           <div style={styles.actions}>
             <button style={styles.editButton} onClick={() => navigate(`/posts/${id}/edit`)}>
               수정
@@ -122,7 +123,7 @@ function PostDetailPage() {
               <span style={styles.commentDate}>{new Date(comment.createdAt).toLocaleDateString()}</span>
             </div>
             <p style={styles.commentContent}>{comment.content}</p>
-            {token && (
+            {token && comment.nickname === nickname && (
               <button style={styles.commentDeleteButton} onClick={() => handleCommentDelete(comment.id)}>
                 삭제
               </button>

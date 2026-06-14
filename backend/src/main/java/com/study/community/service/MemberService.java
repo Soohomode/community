@@ -54,7 +54,7 @@ public class MemberService {
         }
 
         String token = jwtTokenProvider.generateToken(member.getEmail());
-        return new TokenResponse(token);
+        return new TokenResponse(token, member.getNickname());
     }
 
 }
