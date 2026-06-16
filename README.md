@@ -2,6 +2,12 @@
 
 Spring Boot + React로 구현한 풀스택 커뮤니티 게시판 프로젝트입니다.
 
+## 💡 프로젝트 소개
+Spring Boot와 React를 활용한 풀스택 개발 역량을 키우기 위해
+커뮤니티 게시판을 직접 설계하고 구현했습니다.
+단순 기능 구현을 넘어 레이어드 아키텍처, 디자인 패턴, 배포까지
+실무와 유사한 개발 흐름으로 진행하는 것을 목표로 했습니다.
+
 ## 🔗 배포 URL
 
 - **프론트엔드**: https://community-eight.vercel.app
@@ -29,6 +35,16 @@ Spring Boot + React로 구현한 풀스택 커뮤니티 게시판 프로젝트�
 ![Railway](https://img.shields.io/badge/Railway-Backend-black)
 ![Vercel](https://img.shields.io/badge/Vercel-Frontend-black)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI-black)
+
+## 🤔 기술 선택 이유
+
+**JWT vs 세션**
+→ REST API의 Stateless 특성을 유지하고
+서버 확장성을 고려해 JWT 방식 선택
+
+**FetchType.LAZY**
+→ 게시글 목록 조회 시 불필요한 Member 정보 로딩을 방지하고
+N+1 문제를 예방하기 위해 LAZY 로딩 선택
 
 ---
 
@@ -74,6 +90,12 @@ community/
 ### 댓글
 - 댓글 작성 / 삭제 (본인만 가능)
 - 게시글별 댓글 목록 조회
+
+## 📸 화면 구성
+
+| 게시글 목록 | 게시글 상세 | 로그인 |
+|------------|------------|--------|
+| ![목록](스크린샷URL) | ![상세](스크린샷URL) | ![로그인](스크린샷URL) |
 
 ---
 
