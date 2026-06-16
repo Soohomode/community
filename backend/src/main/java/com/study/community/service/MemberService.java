@@ -4,6 +4,7 @@ import com.study.community.domain.Member;
 import com.study.community.dto.member.LoginRequest;
 import com.study.community.dto.member.MemberJoinRequest;
 import com.study.community.dto.member.TokenResponse;
+import com.study.community.exception.BusinessException;
 import com.study.community.exception.DuplicateEmailException;
 import com.study.community.exception.MemberNotFoundException;
 import com.study.community.jwt.JwtTokenProvider;
@@ -50,7 +51,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFoundException(request.getEmail()));
 
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new BusinessException("비밀번호가 일치하지 않습니다.");
         }
 
         String token = jwtTokenProvider.generateToken(member.getEmail());
