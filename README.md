@@ -95,7 +95,7 @@ community/
 
 | 게시글 목록 | 게시글 상세 | 로그인 |
 |------------|------------|--------|
-| ![목록](스크린샷URL) | ![상세](스크린샷URL) | ![로그인](스크린샷URL) |
+| ![목록](https://github.com/user-attachments/assets/fc03f6c4-508a-4537-b6da-e76bf946edfd) | ![상세](https://github.com/user-attachments/assets/f8ff75bb-397f-46a4-be50-e0e16377436c) | ![로그인](https://github.com/user-attachments/assets/dce8d55a-c19f-4188-859c-8d7f52572341) |
 
 ---
 
