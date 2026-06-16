@@ -22,4 +22,14 @@ public class PostPageResponse {
         this.hasNext = page.hasNext();
     }
 
+    // 테스트용 생성자
+    public PostPageResponse(List<PostResponse> posts, int currentPage,
+                            int totalPages, long totalElements, boolean hasNext) {
+        this.posts = posts;
+        this.currentPage = currentPage;
+        this.totalPages = totalPages;
+        this.totalElements = totalElements;
+        this.hasNext = hasNext;
+    }
+
 }

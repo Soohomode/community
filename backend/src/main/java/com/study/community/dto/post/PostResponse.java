@@ -26,4 +26,15 @@ public class PostResponse {
         this.nickname = post.getMember().getNickname();
         this.createAt = post.getCreatedAt();
     }
+
+    // 테스트용 생성자
+    public PostResponse(Long id, String title, String content,
+                        int viewCount, String nickname, LocalDateTime createdAt) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.viewCount = viewCount;
+        this.nickname = nickname;
+        this.createAt = createdAt;
+    }
 }
