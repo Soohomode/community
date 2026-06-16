@@ -195,6 +195,14 @@ npm run dev
 
 ---
 
+```
+테스트 코드
+├── JUnit + Mockito 기반 단위 테스트 작성
+├── @WebMvcTest로 Controller 계층 독립 테스트
+├── @DataJpaTest로 JPA 쿼리 검증
+└── H2 인메모리 DB 활용 테스트 환경 구성
+```
+
 ## 🔧 트러블슈팅
 
 ### 1. CORS 문제
