@@ -2,6 +2,7 @@ package com.study.community.dto.post;
 
 import com.study.community.domain.Post;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
  * 게시글 응답 DTO
  */
 @Getter
+@NoArgsConstructor
 public class PostResponse {
 
     private Long id;

@@ -278,3 +278,16 @@ depends_on:
   mysql:
     condition: service_healthy
 ```
+
+---
+
+### 6. Redis 캐싱 직렬화 문제
+
+**문제 1**: LocalDateTime 직렬화 실패
+- Jackson의 기본 ObjectMapper는 Java 8 시간 타입을 지원하지 않음
+- JavaTimeModule을 등록해 해결
+
+**문제 2**: 캐시 조회 시 역직렬화 실패
+- DTO에 기본 생성자가 없어 Jackson이 객체를 생성하지 못함
+- @NoArgsConstructor 추가 + setVisibility(FIELD, ANY) 설정으로
+  필드 직접 접근 허용하여 해결

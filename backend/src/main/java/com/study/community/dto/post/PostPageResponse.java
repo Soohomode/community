@@ -1,11 +1,13 @@
 package com.study.community.dto.post;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class PostPageResponse {
 
     private List<PostResponse> posts;
