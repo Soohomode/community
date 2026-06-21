@@ -26,7 +26,7 @@ GET http://localhost:8080/api/posts/999
 ### 토큰으로 게시글 작성
 POST http://localhost:8080/api/posts
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgyMDQwMzgxLCJleHAiOjE3ODIxMjY3ODF9.w-Rs_DOJbbHJuxvq5NrC97ks8JCGrxT4irqQoM-5b1A
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgyMDQxMDk0LCJleHAiOjE3ODIxMjc0OTR9.E_Os7YdxODw4Du4KkexPCbzkWwIgHNzdPNApZrJnVIg
 
 {
   "title": "로그인 후 작성한 게시글",
@@ -78,7 +78,7 @@ Authorization: Bearer 이상한토큰값
 }
 
 ### 게시글 목록 조회 (페이징)
-GET http://localhost:8080/api/posts?page=3&size=5
+GET http://localhost:8080/api/posts?page=0&size=5
 
 ### 게시글 검색
 GET http://localhost:8080/api/posts/search?keyword=게시글&page=0&size=10
@@ -93,4 +93,4 @@ GET http://localhost:8080/api/posts?page=0&size=10&sort=oldest
 GET http://localhost:8080/api/posts?page=0&size=10&sort=popular
 
 ### 게시글 상세 조회 (게시글 + 댓글 한번에)
-GET http://localhost:8080/api/posts/1/detail
+GET http://localhost:8080/api/posts/2/detail

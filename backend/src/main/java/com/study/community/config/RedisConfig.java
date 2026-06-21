@@ -36,7 +36,7 @@ public class RedisConfig {
         // Key는 문자열로 저장 (가독성)
         template.setKeySerializer(new StringRedisSerializer());
         // Value는 JSON으로 저장 (객체를 그대로 저장 가능)
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(serializer);
 
         return template;
     }
