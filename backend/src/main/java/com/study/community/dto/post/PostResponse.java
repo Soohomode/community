@@ -39,4 +39,10 @@ public class PostResponse {
         this.nickname = nickname;
         this.createAt = createdAt;
     }
+
+    // Redis에 쌓인 조회수를 화면 표시용으로 더해주는 메서드
+    public void addViewCount(long additionalViews) {
+        this.viewCount += additionalViews;
+    }
+
 }

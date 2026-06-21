@@ -35,6 +35,7 @@ public class PostService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     private static final String CACHE_KEY_PREFIX = "posts:list:";
+    private static final String VIEW_COUNT_KEY_PREFIX = "post:viewcount:";
     private static final long CACHE_TTL_MINUTES = 5;
 
     // 게시글 목록 캐시 전체 삭제 메서드
@@ -44,6 +45,17 @@ public class PostService {
             redisTemplate.delete(keys);
             log.info("캐시 무효화: {} 개 삭제", keys.size());
         }
+    }
+
+    // DB값 + Redis 누적값을 합쳐서 PostResponse 생성
+    private PostResponse buildResponseWithViewCount(Post post, String key) {
+        Object redisValue = redisTemplate.opsForValue().get(key);
+        long additionalViews = redisValue != null ? Long.parseLong(redisValue.toString()) : 0;
+
+        PostResponse response = new PostResponse(post);
+        response.addViewCount(additionalViews);
+
+        return response;
     }
 
     // 게시글 작성
@@ -103,16 +115,22 @@ public class PostService {
     public PostResponse findById(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
-        return new PostResponse(post);
+
+        String key = VIEW_COUNT_KEY_PREFIX + id;
+        return buildResponseWithViewCount(post, key); // 조회수 증가 없이 합산만
     }
 
-    // 게시글 단건 조회 (조회수 증가 O)
-    @Transactional
+    // 게시글 단건 조회 (조회수 증가 O) - Redis로 관리
+    @Transactional(readOnly = true)
     public PostResponse findByIdWithViewCount(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
-        post.increaseViewCount(); // 조회수 증가
-        return new PostResponse(post);
+
+        // DB UPDATE 대신 Redis 카운터만 증가
+        String key = VIEW_COUNT_KEY_PREFIX + id;
+        redisTemplate.opsForValue().increment(key); // 조회수 증가
+
+        return buildResponseWithViewCount(post, key);
     }
 
     // 게시글 검색

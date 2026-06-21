@@ -4,6 +4,9 @@ import com.study.community.domain.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     /**
@@ -19,4 +22,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 게시글 제목으로 검색
     Page<Post> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+
+    @Modifying
+    @Query("UPDATE Post p SET p.viewCount = p.viewCount + :additionalViews WHERE p.id = :postId")
+    void addViewCount(@Param("postId") Long postId, @Param("additionalViews") long additionalViews);
 }

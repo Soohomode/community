@@ -45,9 +45,9 @@ public class Post {
         this.content = content;
     }
 
-    public void increaseViewCount() {
-        this.viewCount++;
-    }
+//    public void increaseViewCount() {
+//        this.viewCount++;
+//    }
 
     @PrePersist
     public void prePersist() {
