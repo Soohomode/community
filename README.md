@@ -23,6 +23,7 @@ Spring Boot와 React를 활용한 풀스택 개발 역량을 키우기 위해
 ![Spring Security](https://img.shields.io/badge/Spring_Security-6.x-green)
 ![JPA](https://img.shields.io/badge/Spring_Data_JPA-3.x-green)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![Redis](https://img.shields.io/badge/Redis-7.x-red)
 ![JWT](https://img.shields.io/badge/JWT-0.11.5-purple)
 
 ### Frontend
@@ -86,6 +87,8 @@ community/
 - 게시글 상세 조회 (조회수 증가)
 - 제목 키워드 검색
 - 최신순 / 오래된순 / 조회수순 정렬
+- Redis 기반 게시글 목록 캐싱 (Cache Aside 패턴)
+- Redis 기반 조회수 카운팅 및 주기적 DB 반영 (Write-Back)
 
 ### 댓글
 - 댓글 작성 / 삭제 (본인만 가능)
@@ -122,6 +125,44 @@ MySQL
 | Strategy | 게시글 정렬 | 정렬 방식 유연한 교체 |
 | Facade | 게시글 상세 조회 | 게시글 + 댓글 단일 API |
 | Repository | 데이터 접근 계층 | DB 로직 분리 |
+
+---
+
+## ⚡ 캐싱 전략
+
+### 게시글 목록 캐싱 (Cache Aside)
+
+```
+게시글 목록 요청
+    ↓
+Redis 캐시 조회 (posts:list:{page}:{size}:{sort})
+    ↓
+캐시 HIT → 즉시 응답 (DB 조회 없음)
+    ↓
+캐시 MISS → DB 조회 → Redis에 저장 (TTL 5분) → 응답
+
+게시글 작성/수정/삭제 시
+    ↓
+관련 캐시 즉시 무효화 (evictListCache)
+```
+
+### 조회수 관리 (Write-Back)
+
+```
+게시글 상세 조회
+    ↓
+Redis 카운터 증가 (post:viewcount:{postId})
+    ↓
+응답 조회수 = DB 저장값 + Redis 누적값
+
+1분마다 스케줄러 실행 (@Scheduled)
+    ↓
+Redis에 쌓인 조회수를 DB에 벌크 UPDATE
+    ↓
+반영 완료된 Redis 키 삭제
+```
+
+**도입 이유**: 조회수는 트래픽이 몰릴 때 동시에 많은 쓰기 요청이 발생하는 데이터예요. 매번 DB에 UPDATE 쿼리를 보내면 부하가 크기 때문에, Redis에 빠르게 카운팅하고 일정 주기로 모아서 DB에 반영하는 방식을 적용했습니다.
 
 ---
 
@@ -291,3 +332,39 @@ depends_on:
 - DTO에 기본 생성자가 없어 Jackson이 객체를 생성하지 못함
 - @NoArgsConstructor 추가 + setVisibility(FIELD, ANY) 설정으로
   필드 직접 접근 허용하여 해결
+
+---
+
+### 7. RedisTemplate ValueSerializer 미적용 버그
+
+**문제**: `JavaTimeModule`을 등록한 `ObjectMapper`로 커스텀 Serializer를 만들었지만, 실제로는 LocalDateTime 직렬화 오류가 계속 발생
+
+**원인**: `setValueSerializer()` 호출 시, 커스터마이징한 serializer 변수가 아닌 기본 `GenericJackson2JsonRedisSerializer()`를 새로 생성해서 전달하는 실수가 있었음
+
+```java
+// 문제 코드
+GenericJackson2JsonRedisSerializer serializer =
+        new GenericJackson2JsonRedisSerializer(objectMapper); // 커스텀 설정 적용
+
+template.setValueSerializer(new GenericJackson2JsonRedisSerializer()); // 기본 설정 사용 (버그!)
+```
+
+**해결**: 커스터마이징한 `serializer` 변수를 그대로 전달하도록 수정
+
+```java
+template.setValueSerializer(serializer); // 수정
+```
+
+**배운 점**: 객체를 변수에 담아 설정해두고 실제 사용 시점에 변수를 참조하지 않는 실수는 컴파일 에러 없이 조용히 묻힐 수 있어, 항상 "실제로 어떤 값이 사용되는지" 추적하는 습관이 중요함을 느꼈습니다.
+
+---
+
+### 8. 조회수 동시성 및 DB 부하 문제
+
+**문제**: 인기 게시글에 트래픽이 몰릴 경우 조회마다 DB UPDATE가 발생해 부하가 커짐
+
+**해결**: Redis `INCR`로 조회수를 빠르게 카운팅하고, 화면 응답 시 DB 저장값과 Redis 누적값을 합산해 보여주는 방식 적용. 1분마다 `@Scheduled` 배치로 누적된 조회수를 DB에 벌크 UPDATE 후 Redis 키 삭제
+
+**트레이드오프**: 서버 재시작 시 아직 DB에 반영되지 않은 Redis의 조회수 데이터는 유실될 수 있음. 조회수는 정합성이 100% 중요하지 않은 데이터라 판단해 성능 이득을 우선시함
+
+---
