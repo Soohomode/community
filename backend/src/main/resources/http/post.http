@@ -36,7 +36,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0I
 ### 토큰으로 게시글 작성
 POST http://localhost:8080/api/posts
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgyMDM3ODQ5LCJleHAiOjE3ODIxMjQyNDl9.YCUTQalA-V8-yw385ez6B3sw8eDX7vEL725YSCqEdK0
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgyMDQyNzE0LCJleHAiOjE3ODIxMjkxMTR9.BIWIkmj5Qm9phxMwPiJ0k5b0tlFi6RDpRx2v0c2AyDY
 
 {
   "title": "검색 기능 테스트 test 123",
@@ -93,4 +93,4 @@ GET http://localhost:8080/api/posts?page=0&size=10&sort=oldest
 GET http://localhost:8080/api/posts?page=0&size=10&sort=popular
 
 ### 게시글 상세 조회 (게시글 + 댓글 한번에)
-GET http://localhost:8080/api/posts/2/detail
+GET http://localhost:8080/api/posts/1/detail
