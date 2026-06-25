@@ -37,12 +37,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // Header에서 토큰 추출
+    // Header 또는 쿼리 파라미터에서 토큰 추출
     private String resolveToken(HttpServletRequest request) {
         String bearer = request.getHeader("Authorization");
         if (bearer != null && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);
         }
+
+        // EventSource는 커스텀 헤더를 못 보내므로 쿼리 파라미터로도 허용
+        // (SSE 구독 엔드포인트 전용)
+        String tokenParam = request.getParameter("token");
+        if (tokenParam != null && !tokenParam.isBlank()) {
+            return tokenParam;
+        }
+
         return null;
     }
 }

@@ -24,6 +24,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     // 댓글 작성
     @Transactional
@@ -31,8 +32,12 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
-        Comment comment = new Comment(request.getContent(),  member, post);
+        Comment comment = new Comment(request.getContent(), member, post);
         commentRepository.save(comment);
+
+        // 게시글 작성자에게 댓글 알림 전송
+        notificationService.notifyComment(post.getMember(),member, postId);
+
         return new CommentResponse(comment);
     }
 
