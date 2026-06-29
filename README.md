@@ -25,6 +25,7 @@ Spring Boot와 React를 활용한 풀스택 개발 역량을 키우기 위해
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
 ![Redis](https://img.shields.io/badge/Redis-7.x-red)
 ![JWT](https://img.shields.io/badge/JWT-0.11.5-purple)
+![SSE](https://img.shields.io/badge/SSE-Server_Sent_Events-yellowgreen)
 
 ### Frontend
 ![React](https://img.shields.io/badge/React-18-blue)
@@ -64,12 +65,13 @@ community/
 │       ├── domain/       # JPA Entity
 │       ├── dto/          # 데이터 전달 객체
 │       ├── jwt/          # JWT 인증 필터
-│       ├── config/       # Security, CORS 설정
+│       ├── config/       # Security, CORS, Redis 설정
 │       └── exception/    # 커스텀 예외 처리
 └── frontend/        # React 프론트엔드
     └── src/
         ├── pages/        # 페이지 컴포넌트
         ├── components/   # 공통 컴포넌트
+        ├── hooks/        # 커스텀 훅 (SSE 알림 등)
         └── api/          # Axios 설정
 ```
 
@@ -94,11 +96,17 @@ community/
 - 댓글 작성 / 삭제 (본인만 가능)
 - 게시글별 댓글 목록 조회
 
+### 알림
+- 댓글 작성 시 게시글 작성자에게 실시간 알림 전송 (SSE)
+- 알림 목록 조회 및 읽음 처리
+- 안 읽은 알림 개수 뱃지 표시
+
 ## 📸 화면 구성
 
-| 게시글 목록 | 게시글 상세 | 로그인 |
-|------------|------------|--------|
-| ![목록](https://github.com/user-attachments/assets/fc03f6c4-508a-4537-b6da-e76bf946edfd) | ![상세](https://github.com/user-attachments/assets/f8ff75bb-397f-46a4-be50-e0e16377436c) | ![로그인](https://github.com/user-attachments/assets/dce8d55a-c19f-4188-859c-8d7f52572341) |
+| 게시글 목록 | 게시글 상세 | 로그인 | 알림 |
+|------------|------------|--------|--------|
+| ![목록](https://github.com/user-attachments/assets/fc03f6c4-508a-4537-b6da-e76bf946edfd) | ![상세](https://github.com/user-attachments/assets/f8ff75bb-397f-46a4-be50-e0e16377436c) | ![로그인](https://github.com/user-attachments/assets/dce8d55a-c19f-4188-859c-8d7f52572341) |![알림](https://github.com/user-attachments/assets/5d56950f-0a5d-4897-bc5a-7253856ce912) |
+
 
 ---
 
@@ -163,6 +171,44 @@ Redis에 쌓인 조회수를 DB에 벌크 UPDATE
 ```
 
 **도입 이유**: 조회수는 트래픽이 몰릴 때 동시에 많은 쓰기 요청이 발생하는 데이터예요. 매번 DB에 UPDATE 쿼리를 보내면 부하가 크기 때문에, Redis에 빠르게 카운팅하고 일정 주기로 모아서 DB에 반영하는 방식을 적용했습니다.
+
+---
+
+## 🔔 실시간 알림 (SSE)
+
+### 전체 흐름
+
+```
+클라이언트 로그인 후 SSE 연결
+    ↓
+GET /api/notifications/subscribe?token={JWT}
+    ↓
+서버가 Map<email, SseEmitter>에 연결 등록
+    ↓
+사용자 B가 A의 게시글에 댓글 작성
+    ↓
+서버가 Notification 저장 (DB)
+    ↓
+Map에서 A의 SseEmitter를 찾아 실시간 이벤트 전송
+    ↓
+A의 화면에 새로고침 없이 즉시 알림 도착
+```
+
+### 읽음 처리
+
+```
+알림 클릭
+    ↓
+PATCH /api/notifications/{id}/read
+    ↓
+본인 알림인지 검증 후 isRead = true (Dirty Checking)
+    ↓
+프론트엔드 상태 즉시 업데이트 → 뱃지 숫자 감소
+```
+
+**SSE를 선택한 이유**: 알림은 서버 → 클라이언트 단방향 푸시만 필요한 기능이라, 양방향 통신이 가능한 WebSocket보다 가볍고 HTTP 기반이라 구현이 단순한 SSE를 선택했습니다.
+
+**한계와 개선 방향**: 현재는 서버 메모리(`ConcurrentHashMap`)에 연결 정보를 저장하기 때문에, 서버를 여러 대로 확장(Scale-out)하면 다른 서버에 연결된 사용자에게는 알림을 전달할 수 없습니다. 실제 운영 환경에서는 Redis Pub/Sub 등으로 서버 간 연결 정보를 공유해야 합니다.
 
 ---
 
@@ -233,6 +279,13 @@ npm run dev
 | GET | /api/posts/{postId}/comments | 댓글 목록 | ❌ |
 | POST | /api/posts/{postId}/comments | 댓글 작성 | ✅ |
 | DELETE | /api/posts/{postId}/comments/{id} | 댓글 삭제 | ✅ |
+
+### 알림
+| Method | URL | 설명 | 인증 |
+|--------|-----|------|------|
+| GET | /api/notifications/subscribe | SSE 알림 구독 연결 | ✅ |
+| GET | /api/notifications | 알림 목록 조회 | ✅ |
+| PATCH | /api/notifications/{id}/read | 알림 읽음 처리 | ✅ |
 
 ---
 
@@ -368,3 +421,64 @@ template.setValueSerializer(serializer); // 수정
 **트레이드오프**: 서버 재시작 시 아직 DB에 반영되지 않은 Redis의 조회수 데이터는 유실될 수 있음. 조회수는 정합성이 100% 중요하지 않은 데이터라 판단해 성능 이득을 우선시함
 
 ---
+
+### 9. SSE 토큰 인증 문제
+
+**문제**: 브라우저의 `EventSource` API는 커스텀 헤더(`Authorization`)를 보낼 수 없어, 기존 JWT 인증 방식으로는 SSE 연결 시 인증이 불가능했음
+
+**해결**: `JwtAuthenticationFilter`에서 헤더뿐 아니라 쿼리 파라미터(`?token=`)로도 토큰을 추출할 수 있도록 수정
+
+```java
+private String resolveToken(HttpServletRequest request) {
+    String bearer = request.getHeader("Authorization");
+    if (bearer != null && bearer.startsWith("Bearer ")) {
+        return bearer.substring(7);
+    }
+    // EventSource는 커스텀 헤더를 못 보내므로 쿼리 파라미터로도 허용
+    String tokenParam = request.getParameter("token");
+    if (tokenParam != null && !tokenParam.isBlank()) {
+        return tokenParam;
+    }
+    return null;
+}
+```
+
+**트레이드오프**: URL에 토큰이 노출되는 방식이라 완전히 이상적인 보안 방식은 아니지만, EventSource의 기술적 제약 때문에 실무에서도 흔히 쓰는 절충안임을 인지하고 적용함
+
+---
+
+### 10. 알림 조회 시 LazyInitializationException
+
+**문제**: 알림 목록 조회 시 `sender.getNickname()` 호출에서 `LazyInitializationException` 발생
+
+**원인**: `NotificationService.findByReceiver()` 메서드에 `@Transactional`이 없어, Repository에서 조회 후 영속성 컨텍스트(세션)가 종료된 상태에서 LAZY 연관관계(`sender`)에 접근하려고 함
+
+**해결**: 메서드에 `@Transactional(readOnly = true)` 추가하여 DTO 변환이 끝날 때까지 세션을 유지
+
+```java
+@Transactional(readOnly = true)
+public List<NotificationResponse> findByReceiver(Long receiverId) {
+    return notificationRepository.findByReceiverIdOrderByCreatedAtDesc(receiverId)
+            .stream()
+            .map(NotificationResponse::new)  // 여기서 LAZY 로딩 발생
+            .toList();
+}
+```
+
+---
+
+### 11. 회원가입/로그인 입력값 검증 누락
+
+**문제**: 이메일, 비밀번호, 닉네임을 모두 빈 값으로 제출해도 회원가입이 정상 처리됨
+
+**원인**: Controller에는 `@Valid`가 선언되어 있었지만, DTO 필드에 실제 검증 규칙(`@NotBlank` 등)이 없어 검증 자체가 수행되지 않음
+
+**해결**: `MemberJoinRequest`, `LoginRequest`에 `@NotBlank`, `@Email`, `@Size` 등 Bean Validation 어노테이션 추가, `GlobalExceptionHandler`에 `MethodArgumentNotValidException` 핸들러 추가
+
+```java
+@NotBlank(message = "이메일은 필수입니다.")
+@Email(message = "올바른 이메일 형식이 아닙니다.")
+private String email;
+```
+
+**배운 점**: `@Valid`는 검증을 "실행"하는 트리거일 뿐, 검증 "규칙"은 DTO에 명시해야 동작한다는 것을 명확히 이해함
