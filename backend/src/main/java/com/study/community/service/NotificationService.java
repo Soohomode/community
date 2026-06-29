@@ -103,6 +103,7 @@ public class NotificationService {
     }
 
     // 알림 목록 조회
+    @Transactional(readOnly = true)
     public List<NotificationResponse> findByReceiver(Long receiverId) {
         return notificationRepository.findByReceiverIdOrderByCreatedAtDesc(receiverId)
                 .stream()
