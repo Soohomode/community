@@ -37,4 +37,15 @@ public class NotificationController {
         return ResponseEntity.ok(ApiResponse.ok("알림 목록 조회 성공",
                 notificationService.findByReceiver(member.getId())));
     }
+
+    // 알림 읽음 처리
+    @PatchMapping("/{id}/read")
+    public ResponseEntity<ApiResponse<Void>> markAsRead(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Member member = memberService.findByEmail(userDetails.getUsername());
+        notificationService.markAsRead(id, member.getId());
+        return ResponseEntity.ok(ApiResponse.ok("알림 읽음 처리 성공", null));
+    }
+
 }

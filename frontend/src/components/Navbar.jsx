@@ -1,14 +1,57 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import api from '../api/axios';
+import useNotification from '../hooks/useNotification';
 
 function Navbar() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  const { notifications, setInitialNotifications, markAsRead } = useNotification();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // 페이지 로드 시 기존 알림 목록 불러오기
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchNotifications = async () => {
+      try {
+        const res = await api.get('/api/notifications');
+        setInitialNotifications(res.data.data);
+      } catch (err) {
+        console.error('알림 목록 조회 실패', err);
+      }
+    };
+
+    fetchNotifications();
+  }, [token]);
+
+  // 드롭다운 바깥 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('nickname');
     navigate('/login');
   };
+
+  const handleNotificationClick = (notification) => {
+  setShowDropdown(false);
+  if (!notification.read) {
+    markAsRead(notification.id);
+  }
+  navigate(`/posts/${notification.postId}`);
+  };
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <nav style={styles.nav}>
@@ -18,6 +61,36 @@ function Navbar() {
       <div style={styles.menu}>
         {token ? (
           <>
+            <div style={styles.notificationWrapper} ref={dropdownRef}>
+              <button
+                onClick={() => setShowDropdown((prev) => !prev)}
+                style={styles.bellButton}
+              >
+                🔔
+                {unreadCount > 0 && (
+                  <span style={styles.badge}>{unreadCount}</span>
+                )}
+              </button>
+
+              {showDropdown && (
+                <div style={styles.dropdown}>
+                  {notifications.length === 0 ? (
+                    <div style={styles.emptyItem}>알림이 없습니다.</div>
+                  ) : (
+                    notifications.map((n) => (
+                      <div
+                        key={n.id}
+                        style={styles.dropdownItem}
+                        onClick={() => handleNotificationClick(n)}
+                      >
+                        {n.content}
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+
             <Link to="/posts/create" style={styles.link}>
               글쓰기
             </Link>
@@ -71,6 +144,53 @@ const styles = {
     padding: '6px 12px',
     cursor: 'pointer',
     borderRadius: '4px',
+  },
+  notificationWrapper: {
+    position: 'relative',
+  },
+  bellButton: {
+    background: 'none',
+    border: 'none',
+    color: 'white',
+    fontSize: '18px',
+    cursor: 'pointer',
+    position: 'relative',
+  },
+  badge: {
+    position: 'absolute',
+    top: '-6px',
+    right: '-8px',
+    backgroundColor: '#e74c3c',
+    color: 'white',
+    borderRadius: '50%',
+    fontSize: '11px',
+    padding: '2px 6px',
+    fontWeight: 'bold',
+  },
+  dropdown: {
+    position: 'absolute',
+    top: '32px',
+    right: 0,
+    backgroundColor: 'white',
+    color: '#333',
+    width: '280px',
+    maxHeight: '320px',
+    overflowY: 'auto',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    zIndex: 100,
+  },
+  dropdownItem: {
+    padding: '12px 16px',
+    fontSize: '14px',
+    borderBottom: '1px solid #eee',
+    cursor: 'pointer',
+  },
+  emptyItem: {
+    padding: '16px',
+    fontSize: '14px',
+    color: '#999',
+    textAlign: 'center',
   },
 };
 

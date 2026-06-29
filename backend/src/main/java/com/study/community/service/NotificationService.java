@@ -4,6 +4,8 @@ import com.study.community.domain.Member;
 import com.study.community.domain.Notification;
 import com.study.community.domain.NotificationType;
 import com.study.community.dto.notification.NotificationResponse;
+import com.study.community.exception.BusinessException;
+import com.study.community.exception.EntityNotFoundException;
 import com.study.community.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -109,5 +111,19 @@ public class NotificationService {
                 .stream()
                 .map(NotificationResponse::new)
                 .toList();
+    }
+
+    // 알림 읽음 처리
+    @Transactional
+    public void markAsRead(Long notificationId, Long memberId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 알림입니다. id: " + notificationId));
+
+        // 본인의 알림인지 확인
+        if (!notification.getReceiver().getId().equals(memberId)) {
+            throw new BusinessException("본인의 알림만 읽음 처리할 수 있습니다.");
+        }
+
+        notification.markAsRead();
     }
 }
