@@ -26,6 +26,7 @@ Spring Boot와 React를 활용한 풀스택 개발 역량을 키우기 위해
 ![Redis](https://img.shields.io/badge/Redis-7.x-red)
 ![JWT](https://img.shields.io/badge/JWT-0.11.5-purple)
 ![SSE](https://img.shields.io/badge/SSE-Server_Sent_Events-yellowgreen)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI_3.1-85EA2D)
 
 ### Frontend
 ![React](https://img.shields.io/badge/React-18-blue)
@@ -251,6 +252,15 @@ cd frontend
 npm install
 npm run dev
 ```
+
+---
+## 📚 API 문서
+
+로컬 실행 후 아래 주소에서 Swagger UI로 모든 API를 확인하고 직접 테스트할 수 있습니다.
+
+http://localhost:8080/swagger-ui/index.html
+
+JWT 인증이 필요한 API는 우측 상단 **Authorize** 버튼을 클릭해 토큰을 입력하면 바로 테스트할 수 있습니다.
 
 ---
 
@@ -482,3 +492,19 @@ private String email;
 ```
 
 **배운 점**: `@Valid`는 검증을 "실행"하는 트리거일 뿐, 검증 "규칙"은 DTO에 명시해야 동작한다는 것을 명확히 이해함
+
+---
+
+### 12. Swagger(springdoc-openapi) 버전 호환성 문제
+
+**문제**: Swagger UI 접속 시 `NoSuchMethodError: ControllerAdviceBean.<init>` 발생
+
+**원인**: `springdoc-openapi-starter-webmvc-ui:2.6.0`이 Spring Boot 3.5.14에 포함된 `spring-webmvc 6.2.18`의 변경된 클래스 시그니처와 호환되지 않음
+
+**해결**: `springdoc-openapi`를 2.8.5로 업그레이드하여 해결
+
+```groovy
+implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+```
+
+**배운 점**: 프레임워크(Spring Boot)와 서드파티 라이브러리(springdoc) 간 버전 호환성은 항상 함께 고려해야 하며, `NoSuchMethodError`처럼 컴파일은 되지만 런타임에 발생하는 에러는 대부분 바이너리 호환성 문제임을 인지하게 됨
