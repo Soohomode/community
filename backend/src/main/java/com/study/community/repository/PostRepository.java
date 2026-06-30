@@ -26,4 +26,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Modifying
     @Query("UPDATE Post p SET p.viewCount = p.viewCount + :additionalViews WHERE p.id = :postId")
     void addViewCount(@Param("postId") Long postId, @Param("additionalViews") long additionalViews);
+
+    // 게시글 목록 조회 시 작성자(Member)를 함께 조회 (N+1 방지)
+    @Query(
+            value = "SELECT p FROM Post p JOIN FETCH p.member",
+            countQuery = "SELECT count(p) FROM Post p" // count 쿼리는 fetch join 불필요 (성능 최적화)
+    )
+    Page<Post> findAllWithMember(Pageable pageable);
+
+    // 게시글 제목으로 검색 (작성자 함께 조회, N+1 방지)
+    @Query(
+            value = "SELECT p FROM Post p JOIN FETCH p.member WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%'))",
+            countQuery = "SELECT count(p) FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%'))"
+    )
+    Page<Post> findByTitleContainingIgnoreCaseWithMember(@Param("keyword") String keyword, Pageable pageable);
 }

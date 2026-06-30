@@ -1,0 +1,72 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 회원 1
+POST http://localhost:8080/api/auth/join
+Content-Type: application/json
+
+{
+  "email": "user1@test.com",
+  "password": "1234",
+  "nickname": "유저1"
+}
+
+### 회원 2
+POST http://localhost:8080/api/auth/join
+Content-Type: application/json
+
+{
+  "email": "user2@test.com",
+  "password": "1234",
+  "nickname": "유저2"
+}
+
+### 회원 3
+POST http://localhost:8080/api/auth/join
+Content-Type: application/json
+
+{
+  "email": "user3@test.com",
+  "password": "1234",
+  "nickname": "유저3"
+}
+
+### user1 로그인
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user3@test.com",
+  "password": "1234"
+}
+
+### user1이 게시글 작성
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMUB0ZXN0LmNvbSIsImlhdCI6MTc4MjgwMDk5OSwiZXhwIjoxNzgyODg3Mzk5fQ.60cHJiIagFvn66vScDhrQpBaGorHcp79u-IIBcbkB6Y
+
+{
+  "title": "N+1 테스트 게시글 7",
+  "content": "테스트 내용"
+}
+
+### user2가 게시글 작성
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkB0ZXN0LmNvbSIsImlhdCI6MTc4MjgwMTA3NywiZXhwIjoxNzgyODg3NDc3fQ.xNyqnc3mLJ7fXpU3YBPH6dihEOIvm07sNCVu_lBDcwo
+
+{
+  "title": "N+1 테스트 게시글 8",
+  "content": "테스트 내용"
+}
+
+### user3가 게시글 작성
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyM0B0ZXN0LmNvbSIsImlhdCI6MTc4MjgwMTExNywiZXhwIjoxNzgyODg3NTE3fQ.fg0Jphl7zjZoQOpph354zP3lNZ3w7J6KgWvOar46Ask
+
+{
+  "title": "N+1 테스트 게시글 9",
+  "content": "테스트 내용"
+}

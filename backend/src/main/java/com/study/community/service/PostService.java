@@ -91,7 +91,7 @@ public class PostService {
         }
         log.info("캐시 MISS: {}", cacheKey);
 
-        // 2. 캐시 없으면 기존 로직대로 DB 조회
+        // 2. 캐시 없으면 기존 로직대로 DB 조회 (fetch join으로 N+1 방지)
         PostSortStrategy strategy = sortStrategies.stream()
                 .filter(s -> s.getType().equals(sort))
                 .findFirst()
@@ -101,7 +101,7 @@ public class PostService {
                         .orElseThrow());
 
         PageRequest pageable = PageRequest.of(page, size, strategy.getSort());
-        Page<PostResponse> postPage = postRepository.findAll(pageable)
+        Page<PostResponse> postPage = postRepository.findAllWithMember(pageable)
                 .map(PostResponse::new);
         PostPageResponse response = new PostPageResponse(postPage);
 
@@ -136,7 +136,7 @@ public class PostService {
     // 게시글 검색
     public PostPageResponse search(String keyword, Pageable pageable) {
         Page<PostResponse> page = postRepository
-                .findByTitleContainingIgnoreCase(keyword, pageable)
+                .findByTitleContainingIgnoreCaseWithMember(keyword, pageable)
                 .map(PostResponse::new);
         return new PostPageResponse(page);
     }
