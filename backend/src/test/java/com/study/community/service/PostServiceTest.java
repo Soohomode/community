@@ -6,7 +6,6 @@ import com.study.community.dto.post.PostCreateRequest;
 import com.study.community.dto.post.PostResponse;
 import com.study.community.exception.PostNotFoundException;
 import com.study.community.repository.PostRepository;
-import com.study.community.service.strategy.CreatedAtDescStrategy;
 import com.study.community.service.strategy.PostSortStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,9 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -36,6 +34,12 @@ class PostServiceTest {
     @Mock
     private List<PostSortStrategy> sortStrategies;
 
+    @Mock
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Mock
+    private ValueOperations<String, Object> valueOperations;
+
     @InjectMocks
     private PostService postService;
 
@@ -49,7 +53,7 @@ class PostServiceTest {
                 .password("password")
                 .nickname("테스터")
                 .build();
-        ReflectionTestUtils.setField(testMember, "id", 1L); // id 설정
+        ReflectionTestUtils.setField(testMember, "id", 1L);
 
         testPost = Post.builder()
                 .title("테스트 제목")
@@ -65,6 +69,7 @@ class PostServiceTest {
         PostCreateRequest request = new PostCreateRequest();
         given(postRepository.save(any(Post.class))).willReturn(testPost);
         given(postRepository.findById(any())).willReturn(Optional.of(testPost));
+        given(redisTemplate.keys(any())).willReturn(null); // evictListCache 대응
 
         // when
         PostResponse response = postService.create(request, testMember);
@@ -91,13 +96,16 @@ class PostServiceTest {
     void findByIdWithViewCount_increaseViewCount() {
         // given
         given(postRepository.findById(any())).willReturn(Optional.of(testPost));
-        int beforeViewCount = testPost.getViewCount();
+        given(redisTemplate.opsForValue()).willReturn(valueOperations);
+        given(valueOperations.increment(any())).willReturn(1L);
+        given(valueOperations.get(any())).willReturn("1"); // 증가 후 다시 조회되는 값
 
         // when
-        postService.findByIdWithViewCount(1L);
+        PostResponse response = postService.findByIdWithViewCount(1L);
 
         // then
-        assertThat(testPost.getViewCount()).isEqualTo(beforeViewCount + 1);
+        assertThat(response.getViewCount()).isEqualTo(1); // Redis 합산 결과 검증
+        then(valueOperations).should().increment(any()); // increment 호출 검증
     }
 
     @Test
@@ -109,7 +117,7 @@ class PostServiceTest {
                 .password("password")
                 .nickname("다른유저")
                 .build();
-        ReflectionTestUtils.setField(otherMember, "id", 2L); // id 설정
+        ReflectionTestUtils.setField(otherMember, "id", 2L);
 
         given(postRepository.findById(any())).willReturn(Optional.of(testPost));
 
