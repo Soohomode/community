@@ -213,6 +213,54 @@ PATCH /api/notifications/{id}/read
 
 ---
 
+## 🔄 CI/CD
+
+### 파이프라인 흐름
+
+```
+master 브랜치에 push 또는 PR 발생
+    ↓
+GitHub Actions 트리거
+    ↓
+JDK 17 설정 + Gradle 실행 권한 부여
+    ↓
+테스트 실행 (./gradlew test)
+    ↓
+테스트 실패 → 빌드 중단, PR에 ❌ 표시
+테스트 통과 → 테스트 결과 리포트 업로드 → 빌드 진행
+    ↓
+빌드 성공 시 GitHub Actions 초록불 ✅
+```
+
+### 도입 이유
+
+코드 변경 시마다 사람이 수동으로 테스트를 돌려보는 방식은 누락되기 쉽습니다. PR/push마다 전체 테스트가 자동으로 실행되도록 구성해, 기능 추가나 리팩토링 과정에서 기존 기능이 깨지는 것을 빠르게 발견할 수 있도록 했습니다. 실제로 Redis 캐싱 기능을 추가한 뒤 기존 `PostServiceTest`가 CI에서 실패하는 것을 발견했고, 이를 통해 테스트 코드 누락을 즉시 인지하고 수정할 수 있었습니다.
+
+### 구성 (`.github/workflows/ci.yml`)
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - run: ./gradlew test          # 테스트 게이트
+      - uses: actions/upload-artifact@v4   # 실패 시에도 리포트 보존
+        if: always()
+      - run: ./gradlew build -x test       # 테스트는 이미 실행했으므로 중복 제외
+```
+
+### 향후 개선 방향
+
+현재는 테스트 성공 여부만 확인하지만, GitHub 브랜치 보호 규칙(Branch Protection Rule)을 적용하면 테스트를 통과하지 못한 PR은 머지 자체를 차단할 수 있습니다. 이후 배포 자동화(CD)까지 연결해 master 브랜치 merge 시 Railway에 자동 배포되도록 확장하는 것도 고려하고 있습니다.
+
 ## 🔐 인증 흐름
 
 ```
@@ -508,3 +556,21 @@ implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 ```
 
 **배운 점**: 프레임워크(Spring Boot)와 서드파티 라이브러리(springdoc) 간 버전 호환성은 항상 함께 고려해야 하며, `NoSuchMethodError`처럼 컴파일은 되지만 런타임에 발생하는 에러는 대부분 바이너리 호환성 문제임을 인지하게 됨
+
+---
+
+### 13. GitHub Actions 워크플로우 경로 및 테스트 미실행 문제
+
+**문제 1**: `.github/workflows/ci.yml`이 레포 루트가 아닌 `backend/.github/workflows/`에 위치해 GitHub Actions가 워크플로우 자체를 인식하지 못함
+
+**해결**: 워크플로우 파일을 레포 루트로 이동하고, `gradlew` 실행을 위해 `working-directory: backend` 옵션 추가
+
+**문제 2**: CI에서 `./gradlew build -x test`로 테스트를 건너뛰고 있어 테스트 코드가 실제로는 한 번도 검증되지 않고 있었음
+
+**해결**: 별도의 "테스트 실행" 단계(`./gradlew test`)를 추가하여 PR/push마다 테스트가 자동 실행되고, 실패 시 빌드가 중단되도록 구성
+
+**문제 3**: Redis 캐싱/조회수 기능 도입 이후 `PostServiceTest`가 CI에서 `NullPointerException`으로 실패. `PostService`가 `RedisTemplate`을 의존하게 됐지만 테스트에는 Mock이 추가되지 않았던 것이 원인
+
+**해결**: `@Mock RedisTemplate`, `@Mock ValueOperations`를 추가하고, `redisTemplate.opsForValue()` 호출 시 Mock된 `ValueOperations`를 반환하도록 연결. 조회수 검증 로직도 엔티티 직접 조회 대신 `PostResponse`의 Redis 합산 결과를 검증하도록 수정
+
+**배운 점**: 기능을 추가/변경할 때마다 관련 테스트 코드도 함께 갱신해야 하며, CI는 이런 누락을 자동으로 잡아주는 안전망 역할을 한다는 것을 직접 경험함
