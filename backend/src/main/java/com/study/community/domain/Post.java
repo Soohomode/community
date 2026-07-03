@@ -25,6 +25,8 @@ public class Post {
 
     private int viewCount = 0;
 
+    private int likeCount = 0;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -48,6 +50,18 @@ public class Post {
 //    public void increaseViewCount() {
 //        this.viewCount++;
 //    }
+
+    // 좋아요 증가
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    // 좋아요 감소
+    public void decreaseLikeCount() {
+        if (this.likeCount > 0) {
+            this.likeCount--;
+        }
+    }
 
     @PrePersist
     public void prePersist() {
