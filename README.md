@@ -92,6 +92,7 @@ community/
 - 최신순 / 오래된순 / 조회수순 정렬
 - Redis 기반 게시글 목록 캐싱 (Cache Aside 패턴)
 - Redis 기반 조회수 카운팅 및 주기적 DB 반영 (Write-Back)
+- 좋아요 토글 (추가/취소, 동시성 제어 적용)
 
 ### 댓글
 - 댓글 작성 / 삭제 (본인만 가능)
@@ -173,7 +174,75 @@ Redis에 쌓인 조회수를 DB에 벌크 UPDATE
 
 **도입 이유**: 조회수는 트래픽이 몰릴 때 동시에 많은 쓰기 요청이 발생하는 데이터예요. 매번 DB에 UPDATE 쿼리를 보내면 부하가 크기 때문에, Redis에 빠르게 카운팅하고 일정 주기로 모아서 DB에 반영하는 방식을 적용했습니다.
 
+
 ---
+
+## ⚡ 동시성 제어 (좋아요 기능)
+
+### 문제 상황
+
+```
+10명이 동시에 같은 게시글에 좋아요를 누르는 상황
+
+기대값: likeCount = 10
+실제값: likeCount = 1  ← Race Condition(경쟁 조건) 발생!
+
+원인:
+10개 스레드가 동시에 likeCount=0을 읽음
+각자 +1 계산 → 1
+각자 likeCount=1로 DB에 씀
+→ 마지막에 쓴 스레드의 값(1)만 남음 (Lost Update)
+```
+
+### 해결 — 낙관적 락 (Optimistic Lock)
+
+```
+"충돌이 거의 없을 것이다"고 가정하고
+수정 시점에 버전을 체크해서 충돌을 감지하는 방식
+```
+
+**Post 엔티티에 @Version 추가**
+
+```java
+@Version
+private Long version;
+```
+
+```
+JPA가 UPDATE 쿼리를 이렇게 변경:
+
+기존:
+UPDATE post SET like_count=? WHERE id=?
+
+@Version 추가 후:
+UPDATE post SET like_count=?, version=? WHERE id=? AND version=?
+                                              ↑ 내가 읽은 버전이 맞는지 체크!
+
+버전이 이미 바뀌어 있으면 → 0건 UPDATE
+→ ObjectOptimisticLockingFailureException 발생
+```
+
+### 재시도 전략 (TransactionTemplate)
+
+```
+@Transactional은 메서드 완료 후(커밋 시점)에 예외 발생 →
+일반 try-catch로 잡을 수 없음
+
+→ TransactionTemplate으로 트랜잭션을 직접 제어
+   커밋 시점의 예외도 try-catch로 잡아서 재시도 가능
+
+충돌 발생 시 최대 10번까지 재시도
+재시도할수록 대기 시간 증가 (50ms * 재시도 횟수)
+```
+
+**동시성 테스트 결과**
+
+| 단계 | 방식 | 기대값 | 실제값 |
+|------|------|--------|--------|
+| 1단계 | 낙관적 락 없음 | 10 | 1 (Lost Update) |
+| 2단계 | @Version만 추가 | 10 | 0 (재시도 없음) |
+| 3단계 | @Version + 재시도(MAX=5) | 10 | 7 (재시도 부족) |
+| 4단계 | @Version + 재시도(MAX=10) | 10 | 10 ✅ |
 
 ## 🔔 실시간 알림 (SSE)
 
@@ -337,6 +406,11 @@ JWT 인증이 필요한 API는 우측 상단 **Authorize** 버튼을 클릭해 �
 | GET | /api/posts/{postId}/comments | 댓글 목록 | ❌ |
 | POST | /api/posts/{postId}/comments | 댓글 작성 | ✅ |
 | DELETE | /api/posts/{postId}/comments/{id} | 댓글 삭제 | ✅ |
+
+### 좋아요
+| Method | URL | 설명 | 인증 |
+|--------|-----|------|------|
+| POST | /api/posts/{postId}/like | 좋아요 토글 (추가/취소) | ✅ |
 
 ### 알림
 | Method | URL | 설명 | 인증 |
@@ -574,3 +648,35 @@ implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 **해결**: `@Mock RedisTemplate`, `@Mock ValueOperations`를 추가하고, `redisTemplate.opsForValue()` 호출 시 Mock된 `ValueOperations`를 반환하도록 연결. 조회수 검증 로직도 엔티티 직접 조회 대신 `PostResponse`의 Redis 합산 결과를 검증하도록 수정
 
 **배운 점**: 기능을 추가/변경할 때마다 관련 테스트 코드도 함께 갱신해야 하며, CI는 이런 누락을 자동으로 잡아주는 안전망 역할을 한다는 것을 직접 경험함
+
+---
+
+### 14. 좋아요 기능 동시성 문제 (Race Condition)
+
+**문제**: 10명이 동시에 좋아요를 누르면 `likeCount`가 10이 아닌 1이 나옴
+
+**원인**: 여러 스레드가 동시에 같은 `likeCount` 값을 읽고 각자 +1 계산 후 덮어쓰는 Lost Update 문제 발생
+
+**해결 시도 1**: `@Version` 낙관적 락 추가
+```java
+@Version
+private Long version;
+```
+→ 충돌은 감지했지만 `likeCount = 0` (재시도 로직 없어서 모두 롤백됨)
+
+**해결 시도 2**: `@Transactional` + 재시도 while loop 추가
+→ `@Transactional`은 커밋 시점에 예외가 발생해서 일반 `try-catch`로 잡히지 않음
+
+**최종 해결**: `TransactionTemplate`으로 트랜잭션을 직접 제어
+```java
+Boolean result = transactionTemplate.execute(status -> {
+    // DB 작업
+});
+```
+→ 커밋까지 포함해서 `try-catch`로 감쌀 수 있어서 재시도 가능
+→ `MAX_RETRY = 10`으로 설정해서 최종적으로 `likeCount = 10` 달성
+
+**배운 점**:
+- `@Transactional`은 AOP 프록시 방식이라 커밋 시점의 예외를 직접 잡을 수 없음
+- 재시도가 필요한 동시성 제어에는 `TransactionTemplate`이 더 적합함
+- 낙관적 락은 충돌이 드물 때 유리하고, 재시도 전략을 함께 설계해야 효과적임
