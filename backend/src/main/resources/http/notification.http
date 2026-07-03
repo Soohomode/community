@@ -1,0 +1,8 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### SSE 구독 (회원 A의 토큰으로 연결)
+GET http://localhost:8080/api/notifications/subscribe
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgyMzgyMDkyLCJleHAiOjE3ODI0Njg0OTJ9.YC6oqKJgVXbSVz8G3yTt3XN5G3H7_kUwUsUDugRXuJE
+Accept: text/event-stream

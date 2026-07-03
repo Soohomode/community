@@ -1,0 +1,52 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 회원가입
+POST http://localhost:8080/api/auth/join
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "1234",
+  "nickname": "햄스터"
+}
+
+### 회원가입2
+POST http://localhost:8080/api/auth/join
+Content-Type: application/json
+
+{
+  "email": "test2@test.com",
+  "password": "1234",
+  "nickname": "누룽지"
+}
+
+
+### 로그인
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "1234"
+}
+
+### 로그인2
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test2@test.com",
+  "password": "1234"
+}
+
+### Docker 환경 회원가입 테스트
+POST http://localhost:8080/api/auth/join
+Content-Type: application/json
+
+{
+  "email": "docker@test.com",
+  "password": "1234",
+  "nickname": "도커테스터"
+}

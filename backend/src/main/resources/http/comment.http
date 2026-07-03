@@ -1,0 +1,19 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 댓글 작성
+POST http://localhost:8080/api/posts/1/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MkB0ZXN0LmNvbSIsImlhdCI6MTc4MjM4MzE0MSwiZXhwIjoxNzgyNDY5NTQxfQ.k6w46BVNW-nBOF9RuxPuJiZNItD4EdWQQIen8TsI7ZM
+
+{
+  "content": "첫 번째 댓글입니다!"
+}
+
+### 댓글 목록 조회
+GET http://localhost:8080/api/posts/1/comments
+
+### 댓글 삭제
+DELETE http://localhost:8080/api/posts/1/comments/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzgxMjczODQ3LCJleHAiOjE3ODEzNjAyNDd9.W7xOVGJn_bcjuv8mrLeD50hk7VI9n7tUy4Xg_zLy2ic
