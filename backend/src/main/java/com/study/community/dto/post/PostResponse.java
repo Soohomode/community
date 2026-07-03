@@ -17,6 +17,7 @@ public class PostResponse {
     private String title;
     private String content;
     private int viewCount;
+    private int likeCount;
     private String nickname;
     private LocalDateTime createAt;
 
@@ -25,6 +26,7 @@ public class PostResponse {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.viewCount = post.getViewCount();
+        this.likeCount = post.getLikeCount();
         this.nickname = post.getMember().getNickname();
         this.createAt = post.getCreatedAt();
     }

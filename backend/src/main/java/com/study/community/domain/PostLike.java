@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "post_like",
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"member_id, "post_id}) // 같은 게시글에 중복 좋아요 방지
+        @UniqueConstraint(columnNames = {"member_id", "post_id"}) // 같은 게시글에 중복 좋아요 방지
     })
 public class PostLike {
 

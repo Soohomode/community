@@ -1,0 +1,25 @@
+### 1. 로그인해서 토큰 발급
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user1@test.com",
+  "password": "1234"
+}
+
+---
+
+### 2. 좋아요 추가 (토큰 필요)
+POST http://localhost:8080/api/posts/1/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMUB0ZXN0LmNvbSIsImlhdCI6MTc4MzA3NDIzMywiZXhwIjoxNzgzMTYwNjMzfQ.kyqVUIWC4OPjnUjWmN9la2OuBAOYq-Y6HcMy30w_4kM
+
+---
+
+### 3. 게시글 단건 조회 (likeCount 확인)
+GET http://localhost:8080/api/posts/1
+
+---
+
+### 4. 같은 사람이 같은 게시글 다시 좋아요 클릭 (취소 확인)
+POST http://localhost:8080/api/posts/1/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMUB0ZXN0LmNvbSIsImlhdCI6MTc4MzA3NDIzMywiZXhwIjoxNzgzMTYwNjMzfQ.kyqVUIWC4OPjnUjWmN9la2OuBAOYq-Y6HcMy30w_4kM
