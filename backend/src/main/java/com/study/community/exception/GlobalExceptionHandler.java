@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @Slf4j
 @RestControllerAdvice
@@ -51,4 +52,15 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.fail("서버 오류가 발생했습니다."));
     }
+
+    // 낙관적 락 충돌 시 처리
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ApiResponse<Void>> handleOptimisticLockException(
+            ObjectOptimisticLockingFailureException e) {
+        log.warn("낙관적 락 충돌 발생: {}", e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT) // 409 Conflict
+                .body(ApiResponse.fail("현재 다른 사용자가 수정 중입니다. 잠시 후 다시 시도해주세요."));
+    }
+
 }

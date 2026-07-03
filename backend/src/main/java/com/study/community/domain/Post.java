@@ -27,6 +27,9 @@ public class Post {
 
     private int likeCount = 0;
 
+    @Version
+    private Long version;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
