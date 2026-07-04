@@ -51,6 +51,8 @@
     frontend/node_modules/**
     node_modules/
     node_modules/**
+    /node_modules/
+    /node_modules/**
 
     # Mac 시스템 파일
     .DS_Store
