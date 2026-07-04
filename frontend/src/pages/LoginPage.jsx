@@ -24,13 +24,20 @@ function LoginPage() {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.box}>
-        <h2 style={styles.title}>로그인</h2>
-        {error && <p style={styles.error}>{error}</p>}
-        <form onSubmit={handleSubmit}>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="bg-white w-full max-w-sm rounded-2xl shadow-sm border border-gray-100 p-8">
+        {/* 제목 */}
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">로그인</h2>
+
+        {/* 에러 메시지 */}
+        {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
+
+        {/* 폼 */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
-            style={styles.input}
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                       placeholder-gray-400 transition-all"
             type="email"
             name="email"
             placeholder="이메일"
@@ -38,74 +45,34 @@ function LoginPage() {
             onChange={handleChange}
           />
           <input
-            style={styles.input}
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                       placeholder-gray-400 transition-all"
             type="password"
             name="password"
             placeholder="비밀번호"
             value={form.password}
             onChange={handleChange}
           />
-          <button style={styles.button} type="submit">
+          <button
+            type="submit"
+            className="w-full py-3 bg-blue-600 text-white text-sm font-semibold
+                       rounded-lg hover:bg-blue-700 transition-colors mt-1"
+          >
             로그인
           </button>
         </form>
-        <p style={styles.linkText}>
-          계정이 없으신가요? <Link to="/join">회원가입</Link>
+
+        {/* 하단 링크 */}
+        <p className="text-center text-sm text-gray-400 mt-5">
+          계정이 없으신가요?{' '}
+          <Link to="/join" className="text-blue-600 font-medium hover:underline">
+            회원가입
+          </Link>
         </p>
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 'calc(100vh - 60px)',
-    backgroundColor: '#f5f5f5',
-  },
-  box: {
-    backgroundColor: 'white',
-    padding: '40px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-    width: '360px',
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: '24px',
-  },
-  input: {
-    width: '100%',
-    padding: '12px',
-    marginBottom: '12px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '14px',
-    boxSizing: 'border-box',
-  },
-  button: {
-    width: '100%',
-    padding: '12px',
-    backgroundColor: '#2d2d2d',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '16px',
-    cursor: 'pointer',
-  },
-  error: {
-    color: 'red',
-    fontSize: '14px',
-    marginBottom: '12px',
-    textAlign: 'center',
-  },
-  linkText: {
-    textAlign: 'center',
-    marginTop: '16px',
-    fontSize: '14px',
-  },
-};
 
 export default LoginPage;

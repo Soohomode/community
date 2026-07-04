@@ -9,6 +9,7 @@ function PostListPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [keyword, setKeyword] = useState('');
   const [sort, setSort] = useState('latest');
+  const token = localStorage.getItem('token');
 
   const fetchPosts = async () => {
     try {
@@ -39,38 +40,45 @@ function PostListPage() {
   };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await api.get('/api/posts', {
-          params: { page, size: 10, sort },
-        });
-        setPosts(res.data.data.posts);
-        setTotalPages(res.data.data.totalPages);
-      } catch (err) {
-        console.error(err);
-      }
-    };
     fetchPosts();
   }, [page, sort]);
 
+  const formatDate = (createdAt) => {
+    if (!createdAt) return '';
+    const date = Array.isArray(createdAt) ? new Date(...createdAt) : new Date(createdAt);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
   return (
-    <div style={styles.container}>
-      {/* 검색 & 정렬 */}
-      <div style={styles.toolbar}>
-        <div style={styles.searchBox}>
+    <div className="max-w-5xl mx-auto px-6 py-8">
+      {/* 검색 & 정렬 영역 */}
+      <div className="flex gap-3 mb-8">
+        <div className="flex flex-1 gap-2">
           <input
-            style={styles.searchInput}
+            className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-sm
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                       transition-all placeholder-gray-400"
             placeholder="검색어를 입력하세요"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && searchPosts()}
           />
-          <button style={styles.searchButton} onClick={searchPosts}>
+          <button
+            className="px-5 py-2.5 bg-gray-800 text-white text-sm font-medium
+                       rounded-lg hover:bg-gray-700 transition-colors"
+            onClick={searchPosts}
+          >
             검색
           </button>
         </div>
         <select
-          style={styles.select}
+          className="px-4 py-2.5 border border-gray-200 rounded-lg text-sm
+                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     bg-white text-gray-700 cursor-pointer"
           value={sort}
           onChange={(e) => {
             setSort(e.target.value);
@@ -84,80 +92,80 @@ function PostListPage() {
       </div>
 
       {/* 게시글 목록 */}
-      <div style={styles.list}>
-        {posts.length === 0 ? (
-          <p style={styles.empty}>게시글이 없습니다.</p>
-        ) : (
-          posts.map((post) => (
-            <div key={post.id} style={styles.item} onClick={() => navigate(`/posts/${post.id}`)}>
-              <h3 style={styles.title}>{post.title}</h3>
-              <div style={styles.meta}>
-                <span>{post.nickname}</span>
-                <span>조회수 {post.viewCount}</span>
-                <span>
-                  {post.createdAt
-                    ? new Date(
-                        Array.isArray(post.createdAt) ? new Date(...post.createdAt) : post.createdAt,
-                      ).toLocaleDateString()
-                    : ''}
-                </span>
+      {posts.length === 0 ? (
+        /* 빈 상태 */
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="text-5xl mb-4">📝</div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">아직 게시글이 없어요</h3>
+          <p className="text-sm text-gray-400 mb-6">첫 번째 게시글을 작성해보세요!</p>
+          {token && (
+            <button
+              onClick={() => navigate('/posts/create')}
+              className="px-5 py-2.5 bg-blue-600 text-white text-sm font-medium
+                         rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              글 작성하기
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {posts.map((post) => (
+            <div
+              key={post.id}
+              onClick={() => navigate(`/posts/${post.id}`)}
+              className="bg-white border border-gray-100 rounded-xl p-5
+                         hover:shadow-md hover:border-gray-200
+                         transition-all cursor-pointer group"
+            >
+              {/* 제목 */}
+              <h3
+                className="text-base font-semibold text-gray-900 mb-3
+                             group-hover:text-blue-600 transition-colors line-clamp-1"
+              >
+                {post.title}
+              </h3>
+
+              {/* 메타 정보 */}
+              <div className="flex items-center gap-4 text-xs text-gray-400">
+                <span className="font-medium text-gray-500">{post.nickname}</span>
+                <span>❤️ {post.likeCount}</span>
+                <span>👁️ {post.viewCount}</span>
+                <span className="ml-auto">{formatDate(post.createAt)}</span>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
-      {/* 페이징 */}
-      <div style={styles.pagination}>
-        <button style={styles.pageButton} disabled={page === 0} onClick={() => setPage(page - 1)}>
-          이전
-        </button>
-        <span style={styles.pageInfo}>
-          {page + 1} / {totalPages}
-        </span>
-        <button style={styles.pageButton} disabled={page >= totalPages - 1} onClick={() => setPage(page + 1)}>
-          다음
-        </button>
-      </div>
+      {/* 페이지네이션 */}
+      {totalPages > 0 && (
+        <div className="flex justify-center items-center gap-4 mt-10">
+          <button
+            onClick={() => setPage(page - 1)}
+            disabled={page === 0}
+            className="px-5 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg
+                       hover:bg-gray-700 transition-colors
+                       disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            이전
+          </button>
+          <span className="text-sm text-gray-500 font-medium">
+            {page + 1} / {totalPages}
+          </span>
+          <button
+            onClick={() => setPage(page + 1)}
+            disabled={page >= totalPages - 1}
+            className="px-5 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg
+                       hover:bg-gray-700 transition-colors
+                       disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            다음
+          </button>
+        </div>
+      )}
     </div>
   );
 }
-
-const styles = {
-  container: { maxWidth: '800px', margin: '40px auto', padding: '0 20px' },
-  toolbar: { display: 'flex', justifyContent: 'space-between', marginBottom: '20px', gap: '12px' },
-  searchBox: { display: 'flex', gap: '8px', flex: 1 },
-  searchInput: { flex: 1, padding: '10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' },
-  searchButton: {
-    padding: '10px 16px',
-    backgroundColor: '#2d2d2d',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  select: { padding: '10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' },
-  list: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  item: {
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-    cursor: 'pointer',
-  },
-  title: { margin: '0 0 8px 0', fontSize: '18px' },
-  meta: { display: 'flex', gap: '16px', color: '#888', fontSize: '14px' },
-  empty: { textAlign: 'center', color: '#888', padding: '40px' },
-  pagination: { display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginTop: '24px' },
-  pageButton: {
-    padding: '8px 16px',
-    backgroundColor: '#2d2d2d',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  pageInfo: { fontSize: '14px', color: '#555' },
-};
 
 export default PostListPage;

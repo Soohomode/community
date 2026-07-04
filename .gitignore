@@ -1,59 +1,55 @@
-    HELP.md
-    .gradle
-    build/
-    !gradle/wrapper/gradle-wrapper.jar
-    !**/src/main/**/build/
-    !**/src/test/**/build/
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-    ### STS ###
-    .apt_generated
-    .classpath
-    .factorypath
-    .project
-    .settings
-    .springBeans
-    .sts4-cache
-    bin/
-    !**/src/main/**/bin/
-    !**/src/test/**/bin/
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
 
-    ### IntelliJ IDEA ###
-    .idea
-    *.iws
-    *.iml
-    *.ipr
-    out/
-    !**/src/main/**/out/
-    !**/src/test/**/out/
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
-    ### NetBeans ###
-    /nbproject/private/
-    /nbbuild/
-    /dist/
-    /nbdist/
-    /.nb-gradle/
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
 
-    ### VS Code ###
-    .vscode/
+### VS Code ###
+.vscode/
 
-    ### Environment variables ###
-    .env
+### Environment variables ###
+.env
 
-    # Frontend
-    frontend/node_modules/
-    frontend/.env
-    **/node_modules/
+# Frontend
+frontend/.env
+frontend/node_modules/
+frontend/node_modules/**
 
-    # 기존 내용 유지하면서 아래 추가
-    .idea/
-    .idea/**
-    frontend/node_modules/
-    frontend/node_modules/**
-    node_modules/
-    node_modules/**
-    /node_modules/
-    /node_modules/**
+# Node
+node_modules/
+node_modules/**
+**/node_modules/
+**/node_modules/**
 
-    # Mac 시스템 파일
-    .DS_Store
-    **/.DS_Store
+# Mac system files
+.DS_Store
+**/.DS_Store

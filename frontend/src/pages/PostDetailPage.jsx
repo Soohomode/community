@@ -9,10 +9,11 @@ function PostDetailPage() {
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   const token = localStorage.getItem('token');
   const nickname = localStorage.getItem('nickname');
 
-  // 댓글만 새로 불러오는 함수 추가
   const fetchComments = async () => {
     try {
       const res = await api.get(`/api/posts/${id}/comments`);
@@ -22,7 +23,6 @@ function PostDetailPage() {
     }
   };
 
-  // 최초 1회만 detail과 댓글을 같이 불러오고, 이후 댓글만 새로고침
   useEffect(() => {
     const fetchDetail = async () => {
       try {
@@ -31,6 +31,7 @@ function PostDetailPage() {
         const res = await api.get(url);
         setPost(res.data.data.post);
         setComments(res.data.data.comments);
+        setLikeCount(res.data.data.post.likeCount);
       } catch (err) {
         console.error(err);
       }
@@ -48,13 +49,12 @@ function PostDetailPage() {
     }
   };
 
-  // 댓글 작성/삭제 시 fetchComments만 호출
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
     try {
       await api.post(`/api/posts/${id}/comments`, { content: newComment });
       setNewComment('');
-      fetchComments(); // detail 대신 comments만 갱신
+      fetchComments();
     } catch (err) {
       alert(err.response?.data?.message || '댓글 작성 실패');
     }
@@ -64,161 +64,175 @@ function PostDetailPage() {
     if (!window.confirm('댓글을 삭제하시겠습니까?')) return;
     try {
       await api.delete(`/api/posts/${id}/comments/${commentId}`);
-      fetchComments(); // detail 대신 comments만 갱신
+      fetchComments();
     } catch (err) {
       alert(err.response?.data?.message || '댓글 삭제 실패');
     }
   };
 
-  if (!post) return <p style={styles.loading}>로딩 중...</p>;
+  // 낙관적 업데이트로 좋아요 토글
+  const handleLike = async () => {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    // 1. 이전 상태 저장 (실패 시 rollback 용)
+    const prevLiked = liked;
+    const prevCount = likeCount;
+
+    // 2. 즉시 UI 업데이트 (낙관적 업데이트)
+    setLiked(!liked);
+    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+
+    try {
+      // 3. API 호출
+      const res = await api.post(`/api/posts/${id}/like`);
+      // 4. API 응답값으로 최종 확정
+      setLiked(res.data.data);
+    } catch (err) {
+      // 5. 실패 시 이전 상태로 rollback
+      setLiked(prevLiked);
+      setLikeCount(prevCount);
+      alert('좋아요 처리에 실패했습니다.');
+    }
+  };
+
+  const formatDate = (createdAt) => {
+    if (!createdAt) return '';
+    const date = Array.isArray(createdAt) ? new Date(...createdAt) : new Date(createdAt);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  if (!post)
+    return (
+      <div className="flex justify-center items-center min-h-64">
+        <div className="text-gray-400 text-sm">로딩 중...</div>
+      </div>
+    );
 
   return (
-    <div style={styles.container}>
-      <div style={styles.postBox}>
-        <h1 style={styles.title}>{post.title}</h1>
-        <div style={styles.meta}>
-          <span>{post.nickname}</span>
-          <span>조회수 {post.viewCount}</span>
-          <span>
-            {post.createdAt
-              ? new Date(
-                  Array.isArray(post.createdAt) ? new Date(...post.createdAt) : post.createdAt,
-                ).toLocaleDateString()
-              : ''}
-          </span>
+    <div className="max-w-5xl mx-auto px-6 py-8">
+      {/* 게시글 카드 */}
+      <div className="bg-white border border-gray-100 rounded-xl p-8 mb-4 shadow-sm">
+        {/* 제목 */}
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">{post.title}</h1>
+
+        {/* 메타 정보 */}
+        <div className="flex items-center gap-4 text-sm text-gray-400 pb-5 border-b border-gray-100">
+          <span className="font-medium text-gray-600">{post.nickname}</span>
+          <span>👁️ {post.viewCount}</span>
+          <span className="ml-auto">{formatDate(post.createAt)}</span>
         </div>
-        <hr style={styles.divider} />
-        <p style={styles.content}>{post.content}</p>
+
+        {/* 본문 */}
+        <p className="py-6 text-gray-700 text-base leading-relaxed whitespace-pre-wrap border-b border-gray-100">
+          {post.content}
+        </p>
+
+        {/* 좋아요 버튼 */}
+        <div className="flex justify-center pt-6 pb-2">
+          <button
+            onClick={handleLike}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full border-2 
+                        font-medium text-sm transition-all
+                        ${
+                          liked
+                            ? 'border-red-400 bg-red-50 text-red-500 hover:bg-red-100'
+                            : 'border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:bg-gray-50'
+                        }`}
+          >
+            <span className="text-lg">{liked ? '❤️' : '🤍'}</span>
+            <span>{likeCount}</span>
+          </button>
+        </div>
+
+        {/* 수정/삭제 버튼 */}
         {token && post.nickname === nickname && (
-          <div style={styles.actions}>
-            <button style={styles.editButton} onClick={() => navigate(`/posts/${id}/edit`)}>
+          <div className="flex justify-end gap-2 pt-4">
+            <button
+              onClick={() => navigate(`/posts/${id}/edit`)}
+              className="px-4 py-2 bg-gray-100 text-gray-600 text-sm rounded-lg
+                         hover:bg-gray-200 transition-colors"
+            >
               수정
             </button>
-            <button style={styles.deleteButton} onClick={handleDelete}>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-50 text-red-500 text-sm rounded-lg
+                         hover:bg-red-100 transition-colors"
+            >
               삭제
             </button>
           </div>
         )}
       </div>
 
-      <div style={styles.commentBox}>
-        <h3 style={styles.commentTitle}>댓글 {comments.length}개</h3>
+      {/* 댓글 카드 */}
+      <div className="bg-white border border-gray-100 rounded-xl p-6 mb-4 shadow-sm">
+        <h3 className="text-base font-semibold text-gray-700 mb-5">댓글 {comments.length}개</h3>
+
+        {/* 댓글 입력창 */}
         {token && (
-          <div style={styles.commentInput}>
+          <div className="flex gap-2 mb-6">
             <textarea
-              style={styles.textarea}
+              className="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-sm
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                         resize-none placeholder-gray-400 transition-all"
               placeholder="댓글을 입력하세요"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
+              rows={2}
             />
-            <button style={styles.submitButton} onClick={handleCommentSubmit}>
+            <button
+              onClick={handleCommentSubmit}
+              className="px-5 bg-gray-800 text-white text-sm font-medium rounded-lg
+                         hover:bg-gray-700 transition-colors"
+            >
               등록
             </button>
           </div>
         )}
-        {comments.map((comment) => (
-          <div key={comment.id} style={styles.comment}>
-            <div style={styles.commentMeta}>
-              <span style={styles.commentNickname}>{comment.nickname}</span>
-              <span style={styles.commentDate}>{new Date(comment.createdAt).toLocaleDateString()}</span>
-            </div>
-            <p style={styles.commentContent}>{comment.content}</p>
-            {token && comment.nickname === nickname && (
-              <button style={styles.commentDeleteButton} onClick={() => handleCommentDelete(comment.id)}>
-                삭제
-              </button>
-            )}
+
+        {/* 댓글 목록 */}
+        {comments.length === 0 ? (
+          <p className="text-center text-sm text-gray-400 py-6">첫 번째 댓글을 남겨보세요!</p>
+        ) : (
+          <div className="flex flex-col divide-y divide-gray-50">
+            {comments.map((comment) => (
+              <div key={comment.id} className="py-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-sm font-semibold text-gray-700">{comment.nickname}</span>
+                  <span className="text-xs text-gray-400">{formatDate(comment.createdAt)}</span>
+                  {token && comment.nickname === nickname && (
+                    <button
+                      onClick={() => handleCommentDelete(comment.id)}
+                      className="ml-auto text-xs text-gray-300 hover:text-red-400 transition-colors"
+                    >
+                      삭제
+                    </button>
+                  )}
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed">{comment.content}</p>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
 
-      <button style={styles.backButton} onClick={() => navigate('/posts')}>
-        목록으로
+      {/* 목록으로 버튼 */}
+      <button
+        onClick={() => navigate('/posts')}
+        className="text-sm text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1"
+      >
+        ← 목록으로
       </button>
     </div>
   );
 }
-
-const styles = {
-  container: { maxWidth: '800px', margin: '40px auto', padding: '0 20px' },
-  loading: { textAlign: 'center', marginTop: '40px' },
-  postBox: {
-    backgroundColor: 'white',
-    padding: '32px',
-    borderRadius: '8px',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-    marginBottom: '24px',
-  },
-  title: { fontSize: '24px', marginBottom: '12px' },
-  meta: { display: 'flex', gap: '16px', color: '#888', fontSize: '14px' },
-  divider: { margin: '20px 0', border: 'none', borderTop: '1px solid #eee' },
-  content: { fontSize: '16px', lineHeight: '1.8', whiteSpace: 'pre-wrap' },
-  actions: { display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '20px' },
-  editButton: {
-    padding: '8px 16px',
-    backgroundColor: '#555',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  deleteButton: {
-    padding: '8px 16px',
-    backgroundColor: '#e74c3c',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  commentBox: {
-    backgroundColor: 'white',
-    padding: '24px',
-    borderRadius: '8px',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-    marginBottom: '16px',
-  },
-  commentTitle: { marginBottom: '16px', fontSize: '18px' },
-  commentInput: { display: 'flex', gap: '8px', marginBottom: '20px' },
-  textarea: {
-    flex: 1,
-    padding: '10px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '14px',
-    resize: 'none',
-    height: '60px',
-  },
-  submitButton: {
-    padding: '0 16px',
-    backgroundColor: '#2d2d2d',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  comment: { padding: '16px 0', borderBottom: '1px solid #eee' },
-  commentMeta: { display: 'flex', gap: '12px', marginBottom: '8px' },
-  commentNickname: { fontWeight: 'bold', fontSize: '14px' },
-  commentDate: { color: '#888', fontSize: '14px' },
-  commentContent: { fontSize: '14px', lineHeight: '1.6' },
-  commentDeleteButton: {
-    marginTop: '8px',
-    padding: '4px 8px',
-    backgroundColor: 'transparent',
-    color: '#e74c3c',
-    border: '1px solid #e74c3c',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-  },
-  backButton: {
-    padding: '10px 20px',
-    backgroundColor: '#f0f0f0',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '14px',
-  },
-};
 
 export default PostDetailPage;
