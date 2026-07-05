@@ -32,6 +32,7 @@ Spring Boot와 React를 활용한 풀스택 개발 역량을 키우기 위해
 ![React](https://img.shields.io/badge/React-18-blue)
 ![Vite](https://img.shields.io/badge/Vite-6.x-purple)
 ![Axios](https://img.shields.io/badge/Axios-1.x-blue)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.x-06B6D4)
 
 ### Infrastructure
 ![Docker](https://img.shields.io/badge/Docker-blue)
@@ -680,3 +681,13 @@ Boolean result = transactionTemplate.execute(status -> {
 - `@Transactional`은 AOP 프록시 방식이라 커밋 시점의 예외를 직접 잡을 수 없음
 - 재시도가 필요한 동시성 제어에는 `TransactionTemplate`이 더 적합함
 - 낙관적 락은 충돌이 드물 때 유리하고, 재시도 전략을 함께 설계해야 효과적임
+
+---
+
+### 15. .gitignore 패턴 앞 공백으로 인한 무시 규칙 미적용
+
+**문제**: `node_modules`가 `.gitignore`에 있는데도 git이 추적하는 현상 발생
+
+**원인**: 패턴 앞에 공백이 있으면 Git이 무시 규칙으로 인식하지 못함
+
+**해결**: 패턴 앞의 공백 제거 후 `git rm -r --cached` 로 추적 해제
