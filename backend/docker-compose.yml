@@ -16,6 +16,19 @@ services:
       retries: 5
       start_period: 30s
 
+  redis:
+    image: redis:7.0
+    container_name: community-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
     build: .
     container_name: community-app
@@ -25,9 +38,14 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/community_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
     depends_on:
       mysql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
 volumes:
   mysql-data:
+  redis-data:
