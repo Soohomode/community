@@ -33,10 +33,20 @@ function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('nickname');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (refreshToken) {
+        await api.post('/api/auth/logout', { refreshToken }); // 서버에 로그아웃 알림
+      }
+    } catch (err) {
+      console.error('로그아웃 API 실패', err);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken'); // 추가!
+      localStorage.removeItem('nickname');
+      navigate('/login');
+    }
   };
 
   const handleNotificationClick = (notification) => {

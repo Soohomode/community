@@ -16,6 +16,7 @@ function LoginPage() {
     try {
       const res = await api.post('/api/auth/login', form);
       localStorage.setItem('token', res.data.data.token);
+      localStorage.setItem('refreshToken', res.data.data.refreshToken);
       localStorage.setItem('nickname', res.data.data.nickname);
       navigate('/posts');
     } catch (err) {

@@ -17,6 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.ArgumentMatchers.anyLong;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -34,6 +37,9 @@ class MemberServiceTest {
 
     @Mock
     private JwtTokenProvider jwtTokenProvider;
+
+    @Mock
+    private RefreshTokenService refreshTokenService;
 
     @InjectMocks
     private MemberService memberService;
@@ -83,13 +89,17 @@ class MemberServiceTest {
         LoginRequest request = new LoginRequest();
         given(memberRepository.findByEmail(any())).willReturn(Optional.of(testMember));
         given(passwordEncoder.matches(any(), any())).willReturn(true);
-        given(jwtTokenProvider.generateToken(any())).willReturn("jwt-token");
+        given(jwtTokenProvider.generateToken(any())).willReturn("access-token");
+        given(jwtTokenProvider.generateRefreshToken(any())).willReturn("refresh-token");
+        given(jwtTokenProvider.getRefreshTokenExpirationMs()).willReturn(604800000L);
+        willDoNothing().given(refreshTokenService).save(any(), any(), anyLong());
 
         // when
         TokenResponse response = memberService.login(request);
 
         // then
-        assertThat(response.getToken()).isEqualTo("jwt-token");
+        assertThat(response.getToken()).isEqualTo("access-token");
+        assertThat(response.getRefreshToken()).isEqualTo("refresh-token");
         assertThat(response.getNickname()).isEqualTo("테스터");
     }
 

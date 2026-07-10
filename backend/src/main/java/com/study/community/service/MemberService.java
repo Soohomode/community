@@ -22,6 +22,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
     // Email로 멤버 조회하기
     public Member findByEmail(String email) {
@@ -54,8 +55,18 @@ public class MemberService {
             throw new BusinessException("비밀번호가 일치하지 않습니다.");
         }
 
-        String token = jwtTokenProvider.generateToken(member.getEmail());
-        return new TokenResponse(token, member.getNickname());
+        // Access Token 생성
+        String accessToken = jwtTokenProvider.generateToken(member.getEmail());
+
+        // Refresh Token 생성 + Redis에 저장
+        String refreshToken = jwtTokenProvider.generateRefreshToken(member.getEmail());
+        refreshTokenService.save(
+                member.getEmail(),
+                refreshToken,
+                jwtTokenProvider.getRefreshTokenExpirationMs()
+        );
+
+        return new TokenResponse(accessToken, refreshToken, member.getNickname());
     }
 
 }

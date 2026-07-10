@@ -14,18 +14,29 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final Key key;
-    private final long expirationMs = 1000 * 60 * 60 * 24; // 24시간
+    private final long accessTokenExpirationMs = 1000 * 60 * 30;       // 30분
+    private final long refreshTokenExpirationMs = 1000 * 60 * 60 * 24 * 7; // 7일
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // 토근 생성
+    // Access Token 생성 (30분)
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationMs))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // Refresh Token 생성 (7일)
+    public String generateRefreshToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpirationMs))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -51,6 +62,11 @@ public class JwtTokenProvider {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    // Refresh Token 만료시간 반환 (Redis TTL 설정에 사용)
+    public long getRefreshTokenExpirationMs() {
+        return refreshTokenExpirationMs;
     }
 
 }
