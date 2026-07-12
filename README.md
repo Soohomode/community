@@ -54,6 +54,22 @@ Spring Boot와 React를 활용한 풀스택 개발 역량을 키우기 위해
 → 게시글 목록 조회 시 불필요한 Member 정보 로딩을 방지하고
 N+1 문제를 예방하기 위해 LAZY 로딩 선택
 
+**Redis 캐싱 (Cache Aside)**
+→ 게시글 목록은 트래픽이 몰리는 반면 자주 바뀌지 않는 데이터라
+Redis를 먼저 조회하고 없을 때만 DB를 조회하는 Cache Aside 패턴 적용
+
+**낙관적 락 + TransactionTemplate 재시도**
+→ 좋아요 동시성 충돌은 드물다고 판단해 비관적 락 대신 낙관적 락(@Version) 선택,
+@Transactional은 커밋 시점 예외를 못 잡아 TransactionTemplate으로 재시도 로직 직접 구현
+
+**SSE vs WebSocket**
+→ 알림은 서버 → 클라이언트 단방향 푸시만 필요해
+양방향인 WebSocket보다 가볍고 구현이 단순한 SSE 선택
+
+**Redis Write-Back (조회수)**
+→ 조회수는 정합성보다 성능이 중요한 데이터라 판단해
+Redis로 빠르게 카운팅 후 1분마다 배치로 DB에 반영
+
 ---
 
 ## 📊 ERD
