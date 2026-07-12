@@ -32,6 +32,25 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
+      - name: JaCoCo 리포트 생성
+        run: ./gradlew jacocoTestReport
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+      - name: JaCoCo 커버리지 배지 생성
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          generate-branches-badge: true
+          jacoco-csv-file: backend/build/reports/jacoco/test/jacocoTestReport.csv
+          badges-directory: badges
+
+      - name: 배지 커밋
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: JaCoCo 커버리지 배지 갱신'
+          file_pattern: badges/*.svg
+
       - name: 테스트 결과 리포트 업로드
         if: always()
         uses: actions/upload-artifact@v4

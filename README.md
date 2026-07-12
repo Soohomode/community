@@ -40,6 +40,10 @@ Spring Boot와 React를 활용한 풀스택 개발 역량을 키우기 위해
 ![Vercel](https://img.shields.io/badge/Vercel-Frontend-black)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI-black)
 
+### Test Coverage
+![Coverage](./badges/jacoco.svg)
+![Branches](./badges/branches.svg)
+
 ## 🤔 기술 선택 이유
 
 **JWT vs 세션**
