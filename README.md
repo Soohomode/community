@@ -1,6 +1,45 @@
 # 🌐 커뮤니티 게시판
 
-Spring Boot + React로 구현한 풀스택 커뮤니티 게시판 프로젝트입니다.
+> Spring Boot + React로 설계부터 배포까지 직접 구현한 풀스택 커뮤니티 게시판입니다.
+> 단순 CRUD 구현을 넘어 캐싱, 동시성 제어, 실시간 알림, 테스트, CI/CD까지 실무 개발 흐름을 경험하는 것을 목표로 했습니다.
+
+[![Frontend](https://img.shields.io/badge/Live_Demo-Frontend-black?logo=vercel)](https://community-eight.vercel.app)
+[![Backend](https://img.shields.io/badge/Live_Demo-Backend_API-black?logo=railway)](https://community-production-e28e.up.railway.app)
+[![Swagger](https://img.shields.io/badge/API_Docs-Swagger-85EA2D?logo=swagger)](#-api-문서)
+
+## 📌 핵심 성과 한눈에
+
+| 항목 | 내용 |
+|---|---|
+| ⚡ 성능 개선 | Redis 캐싱 도입으로 게시글 목록 조회 평균 응답시간 **56% 감소** (8.98ms → 3.94ms, k6 부하테스트 기준) |
+| 🔒 동시성 제어 | 낙관적 락(`@Version`) + `TransactionTemplate` 재시도로 동시 좋아요 요청의 **Lost Update 문제 해결** (10명 동시 요청 → 정합성 10/10 달성) |
+| 🔔 실시간 기능 | SSE 기반 실시간 알림 (댓글 알림 전송, 읽음 처리, 미확인 뱃지) |
+| ✅ 테스트 | 단위/통합 테스트 **49개 전체 통과**, JaCoCo 커버리지 배지 CI 자동 생성 |
+| 🚀 CI/CD | GitHub Actions로 테스트 자동화, Railway로 자동 배포 |
+| 📝 문서화 | 기술 선택 이유 6건, 트러블슈팅 15건을 원인 분석까지 포함해 기록 |
+
+## 📚 목차
+
+- [프로젝트 소개](#-프로젝트-소개)
+- [배포 URL](#-배포-url)
+- [기술 스택](#-기술-스택)
+- [기술 선택 이유](#-기술-선택-이유)
+- [ERD](#-erd)
+- [프로젝트 구조](#-프로젝트-구조)
+- [주요 기능](#-주요-기능)
+- [화면 구성](#-화면-구성)
+- [아키텍처](#-아키텍처)
+- [캐싱 전략](#-캐싱-전략)
+- [동시성 제어](#-동시성-제어-좋아요-기능)
+- [실시간 알림](#-실시간-알림-sse)
+- [CI/CD](#-cicd)
+- [인증 흐름](#-인증-흐름)
+- [로컬 실행 방법](#-로컬-실행-방법)
+- [API 문서](#-api-문서)
+- [API 명세](#-api-명세)
+- [트러블슈팅](#-트러블슈팅)
+
+---
 
 ## 💡 프로젝트 소개
 Spring Boot와 React를 활용한 풀스택 개발 역량을 키우기 위해
@@ -128,8 +167,7 @@ community/
 
 | 게시글 목록 | 게시글 상세 | 로그인 | 알림 |
 |------------|------------|--------|--------|
-| ![목록](https://github.com/user-attachments/assets/fc03f6c4-508a-4537-b6da-e76bf946edfd) | ![상세](https://github.com/user-attachments/assets/f8ff75bb-397f-46a4-be50-e0e16377436c) | ![로그인](https://github.com/user-attachments/assets/dce8d55a-c19f-4188-859c-8d7f52572341) |![알림](https://github.com/user-attachments/assets/5d56950f-0a5d-4897-bc5a-7253856ce912) |
-
+| ![목록](https://github.com/user-attachments/assets/62d0aac5-d249-499b-b82a-3bffa559cfb2) | ![상세](https://github.com/user-attachments/assets/f5f84ad9-b712-455f-94ba-333a13f751ba) | ![로그인](https://github.com/user-attachments/assets/d7f9f411-218d-440f-8d2b-35dcaf726295) |![알림](https://github.com/user-attachments/assets/6002bc94-cb1b-4530-978f-1e00830fd536) |
 
 ---
 
@@ -175,7 +213,6 @@ MySQL
 > 테스트 환경: 로컬 (MacBook), 동시 사용자 10명, 30초 지속
 > 캐시 TTL: 5분, Cache Aside 패턴 적용
 
-
 ```
 게시글 목록 요청
     ↓
@@ -207,7 +244,6 @@ Redis에 쌓인 조회수를 DB에 벌크 UPDATE
 ```
 
 **도입 이유**: 조회수는 트래픽이 몰릴 때 동시에 많은 쓰기 요청이 발생하는 데이터예요. 매번 DB에 UPDATE 쿼리를 보내면 부하가 크기 때문에, Redis에 빠르게 카운팅하고 일정 주기로 모아서 DB에 반영하는 방식을 적용했습니다.
-
 
 ---
 
@@ -465,7 +501,11 @@ JWT 인증이 필요한 API는 우측 상단 **Authorize** 버튼을 클릭해 �
 
 ## 🔧 트러블슈팅
 
-### 1. CORS 문제
+개발 과정에서 마주친 문제 15건을 원인 분석과 해결 과정 중심으로 정리했습니다. 항목을 클릭하면 상세 내용이 펼쳐집니다.
+
+<details>
+<summary><b>1. CORS 문제</b> — Spring Security가 preflight 요청을 막아 CORS 오류 발생 → `CorsConfigurationSource` 빈 등록으로 해결</summary>
+
 **문제**: 프론트엔드(localhost:5173)에서 백엔드(localhost:8080)로 요청 시 CORS 오류 발생
 
 **원인**: Spring Security가 preflight(OPTIONS) 요청을 인증 없이 통과시키지 않아서 발생
@@ -484,9 +524,11 @@ public CorsConfigurationSource corsConfigurationSource() {
 }
 ```
 
----
+</details>
 
-### 2. JWT Stateless 방식 선택 이유
+<details>
+<summary><b>2. JWT Stateless 방식 선택 이유</b> — 세션 대신 JWT(Stateless)를 선택한 이유 → 서버 확장성과 REST API 무상태 아키텍처 고려</summary>
+
 **고민**: 세션 방식 vs JWT 방식
 
 **선택**: JWT (Stateless)
@@ -496,9 +538,11 @@ public CorsConfigurationSource corsConfigurationSource() {
 - REST API 서버에 적합한 무상태(Stateless) 아키텍처 유지
 - 이후 마이크로서비스 전환 시에도 인증 서버 분리 용이
 
----
+</details>
 
-### 3. FetchType.LAZY 선택 이유
+<details>
+<summary><b>3. FetchType.LAZY 선택 이유</b> — FetchType.EAGER 대신 LAZY를 선택한 이유 → N+1 문제 예방</summary>
+
 **고민**: FetchType.EAGER vs FetchType.LAZY
 
 **선택**: LAZY
@@ -508,9 +552,11 @@ public CorsConfigurationSource corsConfigurationSource() {
 - 게시글 목록 조회 시 각 게시글마다 Member를 즉시 로딩하면 N+1 문제 발생
 - LAZY로 설정해 실제 필요한 시점에만 Member 정보 로딩
 
----
+</details>
 
-### 4. 조회수 중복 증가 문제
+<details>
+<summary><b>4. 조회수 중복 증가 문제</b> — 댓글 변경 시 조회수가 중복 증가하는 버그 → 조회 API와 조회수 증가 API 분리로 해결</summary>
+
 **문제**: 댓글 작성/삭제 시 게시글을 다시 불러오면서 조회수가 계속 증가
 
 **원인**: 댓글 변경 후 `fetchDetail()` 을 다시 호출할 때마다 조회수 증가 로직이 실행됨
@@ -520,9 +566,11 @@ public CorsConfigurationSource corsConfigurationSource() {
 - 댓글 변경 시 댓글 목록만 별도로 갱신 (`/api/posts/{id}/comments`)
 - 페이지 최초 진입 시에만 조회수 증가
 
----
+</details>
 
-### 5. Docker MySQL 연결 타이밍 문제
+<details>
+<summary><b>5. Docker MySQL 연결 타이밍 문제</b> — docker-compose 실행 시 MySQL 준비 전 앱이 먼저 떠서 연결 실패 → healthcheck로 해결</summary>
+
 **문제**: `docker compose up` 시 MySQL 준비 전에 앱이 먼저 실행되어 DB 연결 실패
 
 **원인**: `depends_on` 은 컨테이너 시작만 보장하고 MySQL 실제 준비 완료는 보장하지 않음
@@ -539,9 +587,10 @@ depends_on:
     condition: service_healthy
 ```
 
----
+</details>
 
-### 6. Redis 캐싱 직렬화 문제
+<details>
+<summary><b>6. Redis 캐싱 직렬화 문제</b> — Redis 캐시 직렬화 시 LocalDateTime·기본 생성자 문제 → JavaTimeModule, @NoArgsConstructor로 해결</summary>
 
 **문제 1**: LocalDateTime 직렬화 실패
 - Jackson의 기본 ObjectMapper는 Java 8 시간 타입을 지원하지 않음
@@ -552,9 +601,10 @@ depends_on:
 - @NoArgsConstructor 추가 + setVisibility(FIELD, ANY) 설정으로
   필드 직접 접근 허용하여 해결
 
----
+</details>
 
-### 7. RedisTemplate ValueSerializer 미적용 버그
+<details>
+<summary><b>7. RedisTemplate ValueSerializer 미적용 버그</b> — 커스텀 Redis Serializer가 실제로는 적용 안 되던 버그 → 변수 참조 실수 수정</summary>
 
 **문제**: `JavaTimeModule`을 등록한 `ObjectMapper`로 커스텀 Serializer를 만들었지만, 실제로는 LocalDateTime 직렬화 오류가 계속 발생
 
@@ -576,9 +626,10 @@ template.setValueSerializer(serializer); // 수정
 
 **배운 점**: 객체를 변수에 담아 설정해두고 실제 사용 시점에 변수를 참조하지 않는 실수는 컴파일 에러 없이 조용히 묻힐 수 있어, 항상 "실제로 어떤 값이 사용되는지" 추적하는 습관이 중요함을 느꼈습니다.
 
----
+</details>
 
-### 8. 조회수 동시성 및 DB 부하 문제
+<details>
+<summary><b>8. 조회수 동시성 및 DB 부하 문제</b> — 인기 게시글 조회 시 DB 부하 문제 → Redis INCR + 1분 주기 배치 반영(Write-Back)으로 해결</summary>
 
 **문제**: 인기 게시글에 트래픽이 몰릴 경우 조회마다 DB UPDATE가 발생해 부하가 커짐
 
@@ -586,9 +637,10 @@ template.setValueSerializer(serializer); // 수정
 
 **트레이드오프**: 서버 재시작 시 아직 DB에 반영되지 않은 Redis의 조회수 데이터는 유실될 수 있음. 조회수는 정합성이 100% 중요하지 않은 데이터라 판단해 성능 이득을 우선시함
 
----
+</details>
 
-### 9. SSE 토큰 인증 문제
+<details>
+<summary><b>9. SSE 토큰 인증 문제</b> — EventSource가 커스텀 헤더를 못 보내 SSE 인증 불가 → 쿼리 파라미터 토큰 방식으로 해결</summary>
 
 **문제**: 브라우저의 `EventSource` API는 커스텀 헤더(`Authorization`)를 보낼 수 없어, 기존 JWT 인증 방식으로는 SSE 연결 시 인증이 불가능했음
 
@@ -611,9 +663,10 @@ private String resolveToken(HttpServletRequest request) {
 
 **트레이드오프**: URL에 토큰이 노출되는 방식이라 완전히 이상적인 보안 방식은 아니지만, EventSource의 기술적 제약 때문에 실무에서도 흔히 쓰는 절충안임을 인지하고 적용함
 
----
+</details>
 
-### 10. 알림 조회 시 LazyInitializationException
+<details>
+<summary><b>10. 알림 조회 시 LazyInitializationException</b> — 알림 목록 조회 시 LazyInitializationException → @Transactional(readOnly=true) 추가로 해결</summary>
 
 **문제**: 알림 목록 조회 시 `sender.getNickname()` 호출에서 `LazyInitializationException` 발생
 
@@ -631,9 +684,10 @@ public List<NotificationResponse> findByReceiver(Long receiverId) {
 }
 ```
 
----
+</details>
 
-### 11. 회원가입/로그인 입력값 검증 누락
+<details>
+<summary><b>11. 회원가입/로그인 입력값 검증 누락</b> — 빈 값으로도 회원가입이 통과되던 검증 누락 버그 → Bean Validation 어노테이션 추가로 해결</summary>
 
 **문제**: 이메일, 비밀번호, 닉네임을 모두 빈 값으로 제출해도 회원가입이 정상 처리됨
 
@@ -649,9 +703,10 @@ private String email;
 
 **배운 점**: `@Valid`는 검증을 "실행"하는 트리거일 뿐, 검증 "규칙"은 DTO에 명시해야 동작한다는 것을 명확히 이해함
 
----
+</details>
 
-### 12. Swagger(springdoc-openapi) 버전 호환성 문제
+<details>
+<summary><b>12. Swagger(springdoc-openapi) 버전 호환성 문제</b> — Spring Boot 버전과 springdoc-openapi 간 바이너리 호환성 문제 → 라이브러리 버전 업그레이드로 해결</summary>
 
 **문제**: Swagger UI 접속 시 `NoSuchMethodError: ControllerAdviceBean.<init>` 발생
 
@@ -665,9 +720,10 @@ implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 
 **배운 점**: 프레임워크(Spring Boot)와 서드파티 라이브러리(springdoc) 간 버전 호환성은 항상 함께 고려해야 하며, `NoSuchMethodError`처럼 컴파일은 되지만 런타임에 발생하는 에러는 대부분 바이너리 호환성 문제임을 인지하게 됨
 
----
+</details>
 
-### 13. GitHub Actions 워크플로우 경로 및 테스트 미실행 문제
+<details>
+<summary><b>13. GitHub Actions 워크플로우 경로 및 테스트 미실행 문제</b> — GitHub Actions 워크플로우 경로 오류로 CI가 테스트를 건너뛰던 문제 → 경로 수정 + 테스트 게이트 추가</summary>
 
 **문제 1**: `.github/workflows/ci.yml`이 레포 루트가 아닌 `backend/.github/workflows/`에 위치해 GitHub Actions가 워크플로우 자체를 인식하지 못함
 
@@ -683,9 +739,10 @@ implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 
 **배운 점**: 기능을 추가/변경할 때마다 관련 테스트 코드도 함께 갱신해야 하며, CI는 이런 누락을 자동으로 잡아주는 안전망 역할을 한다는 것을 직접 경험함
 
----
+</details>
 
-### 14. 좋아요 기능 동시성 문제 (Race Condition)
+<details>
+<summary><b>14. 좋아요 기능 동시성 문제 (Race Condition)</b> — 좋아요 동시 요청 시 Lost Update(Race Condition) → 낙관적 락 + TransactionTemplate 재시도로 해결 (단계별 검증 포함)</summary>
 
 **문제**: 10명이 동시에 좋아요를 누르면 `likeCount`가 10이 아닌 1이 나옴
 
@@ -715,12 +772,16 @@ Boolean result = transactionTemplate.execute(status -> {
 - 재시도가 필요한 동시성 제어에는 `TransactionTemplate`이 더 적합함
 - 낙관적 락은 충돌이 드물 때 유리하고, 재시도 전략을 함께 설계해야 효과적임
 
----
+</details>
 
-### 15. .gitignore 패턴 앞 공백으로 인한 무시 규칙 미적용
+<details>
+<summary><b>15. .gitignore 패턴 앞 공백으로 인한 무시 규칙 미적용</b> — .gitignore 패턴 앞 공백으로 node_modules가 추적되던 문제 → 공백 제거로 해결</summary>
 
 **문제**: `node_modules`가 `.gitignore`에 있는데도 git이 추적하는 현상 발생
 
 **원인**: 패턴 앞에 공백이 있으면 Git이 무시 규칙으로 인식하지 못함
 
 **해결**: 패턴 앞의 공백 제거 후 `git rm -r --cached` 로 추적 해제
+
+</details>
+
